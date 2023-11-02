@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatherUs.API", "GatherUs.AP
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatherUs.Core", "GatherUs.Core\GatherUs.Core.csproj", "{F9D5D4B3-1E1B-4BFF-AF3F-46FB23562C30}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatherUs.DAL", "GatherUs.DAL\GatherUs.DAL.csproj", "{4EDE9A83-854A-43DA-9E26-E11CAC2FC196}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{F9D5D4B3-1E1B-4BFF-AF3F-46FB23562C30}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F9D5D4B3-1E1B-4BFF-AF3F-46FB23562C30}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F9D5D4B3-1E1B-4BFF-AF3F-46FB23562C30}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4EDE9A83-854A-43DA-9E26-E11CAC2FC196}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4EDE9A83-854A-43DA-9E26-E11CAC2FC196}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4EDE9A83-854A-43DA-9E26-E11CAC2FC196}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4EDE9A83-854A-43DA-9E26-E11CAC2FC196}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
