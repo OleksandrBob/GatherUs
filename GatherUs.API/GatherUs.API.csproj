@@ -15,10 +15,13 @@
 
     <ItemGroup>
       <Folder Include="DTO\" />
+      <Folder Include="Middleware\" />
     </ItemGroup>
 
     <ItemGroup>
       <ProjectReference Include="..\GatherUs.Core\GatherUs.Core.csproj" />
+      <ProjectReference Include="..\GatherUs.DAL\GatherUs.DAL.csproj" />
+      <ProjectReference Include="..\GatherUs.Enums\GatherUs.Enums.csproj" />
     </ItemGroup>
 
 </Project>

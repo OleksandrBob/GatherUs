@@ -1,6 +1,6 @@
 namespace GatherUs.DAL.Models;
 
-public class Organizer
+public class Organizer : User
 {
     
 }

@@ -1,6 +1,6 @@
 namespace GatherUs.DAL.Models;
 
-public class Admin
+public class Admin : User
 {
     
 }

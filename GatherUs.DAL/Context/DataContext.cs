@@ -1,16 +1,20 @@
-using GatherUs.DAL.Enums;
 using GatherUs.DAL.Models;
+using GatherUs.Enums.DAL;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.Extensions.Configuration;
 namespace GatherUs.DAL.Context;
 
 public class DataContext : DbContext, IDataContext
 {
-    private readonly IConnectionOptions _options;
-
-    public DataContext(IConnectionOptions options)
+    private readonly IConnectionStrings _strings;
+    
+    public DataContext()
     {
-        _options = options;
+    }
+
+    public DataContext(IConnectionStrings strings)
+    {
+        _strings = strings;
     }
 
     public DbSet<Guest> Guests { get; set; }
@@ -19,8 +23,20 @@ public class DataContext : DbContext, IDataContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseNpgsql(_options.ConnectionString)
-            .EnableSensitiveDataLogging();
+        if (_strings?.ConnectionString != null)
+        {
+            optionsBuilder.UseNpgsql(_strings.ConnectionString);
+        }
+        else
+        {
+            var configuration = new ConfigurationBuilder()
+                .AddJsonFile("C:\\un\\diploma\\GatherUs\\GatherUs.DAL\\dbsettings.json", false)
+                .Build();
+
+            optionsBuilder.UseNpgsql(configuration
+                .GetSection("ConnectionOptions:ConnectionStringConfig")
+                .Value);
+        }
     }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -40,5 +56,7 @@ public class DataContext : DbContext, IDataContext
             .HasValue<Organizer>(UserType.Organizer)
             .HasValue<Guest>(UserType.Guest)
             .HasValue<Admin>(UserType.Admin);
+        modelBuilder.Entity<User>().Property(u => u.UserType).HasDefaultValue(UserType.Guest);
+
     }
 }

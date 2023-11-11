@@ -1,6 +1,6 @@
 namespace GatherUs.DAL.Context;
 
-public interface IConnectionOptions
+public interface IConnectionStrings
 {
     public string ConnectionString { get; }
 }
