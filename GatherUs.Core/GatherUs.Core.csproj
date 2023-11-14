@@ -3,11 +3,19 @@
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+        <Nullable>disable</Nullable>
     </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="UserLogic\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\GatherUs.DAL\GatherUs.DAL.csproj" />
     </ItemGroup>
 
 </Project>

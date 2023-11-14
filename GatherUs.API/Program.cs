@@ -1,5 +1,7 @@
-using GatherUs.Core.UserLogic;
+using GatherUs.Core.Services;
+using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Context;
+using GatherUs.DAL.Repository;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -13,17 +15,20 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)));
+builder.Services.AddSingleton<IConnectionStrings>(sp => sp.GetRequiredService<IOptions<ConnectionStrings>>().Value);
+
 
 builder.Services.AddDbContext<DataContext>(o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("MainDB")));
 
 
-builder.Services.AddSingleton<IConnectionStrings>(sp => sp.GetRequiredService<IOptions<ConnectionStrings>>().Value);
-
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IDataContext, DataContext>();
+builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IGuestService, GuestService>();
+builder.Services.AddTransient<IOrganizerService, OrganizerService>();
 
 builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
-
-builder.Services.AddTransient<IUserService, UserService>();
 
 var app = builder.Build();
 

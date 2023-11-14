@@ -6,26 +6,31 @@ namespace GatherUs.DAL.Context;
 
 public class DataContext : DbContext, IDataContext
 {
-    private readonly IConnectionStrings _strings;
-    
+    private readonly IConnectionStrings _connectionStrings;
+
     public DataContext()
     {
     }
 
-    public DataContext(IConnectionStrings strings)
+    public DataContext(IConnectionStrings connectionStrings)
     {
-        _strings = strings;
+        _connectionStrings = connectionStrings;
     }
 
     public DbSet<Guest> Guests { get; set; }
-    
+
     public DbSet<Organizer> Organizers { get; set; }
+
+    public async Task<int> DefaultEFSaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        return await base.SaveChangesAsync(cancellationToken);
+    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        if (_strings?.ConnectionString != null)
+        if (_connectionStrings?.ConnectionString != null)
         {
-            optionsBuilder.UseNpgsql(_strings.ConnectionString);
+            optionsBuilder.UseNpgsql(_connectionStrings.ConnectionString);
         }
         else
         {
@@ -42,7 +47,7 @@ public class DataContext : DbContext, IDataContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        
+
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Guest>().ToTable("Users");
         modelBuilder.Entity<Organizer>().ToTable("Users");

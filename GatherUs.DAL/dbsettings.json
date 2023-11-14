@@ -1,5 +1,0 @@
-{
-  "ConnectionOptions": {
-    "ConnectionStringConfig": "Host=localhost;Port=5432;Database=GatherUs;Username=postgres;Password=5555565Bob"
-  }
-}

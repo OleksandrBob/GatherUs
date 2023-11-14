@@ -1,4 +1,3 @@
-using GatherUs.API.Handlers.User;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,11 +21,9 @@ public class UserController : Controller
     }
 
     [HttpGet("{id}")]
-    public IActionResult GetProduct([FromRoute]int id)
+    public IActionResult GetUser([FromRoute]int id)
     {
-        GetUserQuery command = new GetUserQuery(id);
 
-        _mediator.Send(command);
         return BadRequest(id);
     }
 }
