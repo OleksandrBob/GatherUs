@@ -4,5 +4,5 @@ namespace GatherUs.Enums.DAL;
 public enum LoginProvider
 {
     None = 0,
-    GatherUs = 1 << 1,
+    GatherUs = 1 << 0,
 }

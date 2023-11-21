@@ -11,11 +11,12 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="UserLogic\" />
+      <ProjectReference Include="..\GatherUs.DAL\GatherUs.DAL.csproj" />
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\GatherUs.DAL\GatherUs.DAL.csproj" />
+      <Folder Include="Mailing\Dto\" />
+      <Folder Include="Mailing\Templates\" />
     </ItemGroup>
 
 </Project>

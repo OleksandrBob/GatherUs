@@ -45,33 +45,44 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                         new()
                         {
                             ErrorMessage =
-                                $"The user has already registered as a {user.UserType} before",
+                                $"User with this mail has already registered as a {user.UserType}",
                             Args = new() { user.UserType.ToString() },
                         });
                 }
             }
 
-            if (request.Role == UserType.Guest)
+            return request.Role switch
             {
-                return await SignUpGuest(request.Mail);
-            }
-            else if (request.Role == UserType.Organizer)
-            {
-                return await SignUpOrganizer(request.Mail);
-            }
-            else
-            {
-                return Result.Failure<object, FormattedError>(new("Cannot specify user type"));
-            }
+                UserType.Guest => await RegisterGuest(request.Mail, user),
+                UserType.Organizer => await RegisterOrganizer(request.Mail, user),
+                _ => Result.Failure<object, FormattedError>(new("Cannot specify user type"))
+            };
         }
 
-        private async Task<Result<object, FormattedError>> SignUpGuest(string requestMail)
+        private async Task<Result<object, FormattedError>> RegisterGuest(string requestMail, User alreadyRegisteredUser)
         {
+            if (alreadyRegisteredUser?.IsMailConfirmed == true)
+            {
+                return Result.Failure<object, FormattedError>(new("User with specified mail is already registered"));
+            }
+
+            var guestToInsert = new Guest
+            {
+                UserType = UserType.Guest,
+                Mail = requestMail,
+            };
+            
+            await _guestService.InsertAsync(guestToInsert);
             throw new NotImplementedException();
         }
 
-        private async Task<Result<object, FormattedError>> SignUpOrganizer(string requestMail)
+        private async Task<Result<object, FormattedError>> RegisterOrganizer(string requestMail,
+            User alreadyRegisteredUser)
         {
+            if (alreadyRegisteredUser?.IsMailConfirmed == true)
+            {
+                return Result.Failure<object, FormattedError>(new("User with specified mail is already registered"));
+            }
             throw new NotImplementedException();
         }
     }
