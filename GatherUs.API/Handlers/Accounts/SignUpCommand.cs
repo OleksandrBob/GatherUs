@@ -35,7 +35,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
         public async Task<Result<object, FormattedError>> Handle(SignUpCommand request,
             CancellationToken cancellationToken)
         {
-            User user = await _userService.GetByEmailAsync(request.Mail);
+            var user = await _userService.GetByEmailAsync(request.Mail);
 
             if (user is not null)
             {

@@ -13,10 +13,10 @@ public static class CryptoHelper
             return null;
         }
 
-        byte[] saltBytes = Encoding.ASCII.GetBytes(AppConstants.Salt);
+        var saltBytes = Encoding.ASCII.GetBytes(AppConstants.Salt);
 
         Rfc2898DeriveBytes rfc2898DeriveBytes = new(password, saltBytes, 10000);
-        string hashPassword = Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
+        var hashPassword = Convert.ToBase64String(rfc2898DeriveBytes.GetBytes(256));
 
         return hashPassword;
     }

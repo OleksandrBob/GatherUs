@@ -65,8 +65,8 @@ public class UnitOfWork : IDisposable, IUnitOfWork
 
     public async Task CompleteAsync(bool withTimeUpdate = true)
     {
-        bool savedData = false;
-        int loopCounter = 0;
+        var savedData = false;
+        var loopCounter = 0;
         while (!savedData && loopCounter <= MaxSaveDataLoops)
         {
             try

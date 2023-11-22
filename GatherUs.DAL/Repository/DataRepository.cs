@@ -42,7 +42,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
     {
         return await HandleSqlExceptionAsync(() =>
         {
-            IQueryable<TEntity> query = AggregateIncludes(includes);
+            var query = AggregateIncludes(includes);
             return trackChanges ? query.ToListAsync() : query.AsNoTracking().ToListAsync();
         });
     }
@@ -52,7 +52,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
     {
         return await HandleSqlExceptionAsync(() =>
         {
-            IQueryable<TEntity> query = AggregateIncludes(includes);
+            var query = AggregateIncludes(includes);
             return query.Where(filter).ToListAsync();
         });
     }
@@ -64,7 +64,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
         bool disableTracking = true,
         bool ignoreQueryFilters = false)
     {
-        IQueryable<TEntity> query = FormQuery(
+        var query = FormQuery(
             predicate: predicate,
             orderBy: orderBy,
             include: include,
@@ -84,7 +84,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
         bool disableTracking = true,
         bool ignoreQueryFilters = false)
     {
-        IQueryable<TEntity> query = FormQuery(
+        var query = FormQuery(
             predicate: predicate,
             orderBy: orderBy,
             include: include,
@@ -227,7 +227,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
         bool ignoreQueryFilters = false,
         bool splitQuery = false)
     {
-        IQueryable<TEntity> query = FormQuery(
+        var query = FormQuery(
             predicate: predicate,
             orderBy: orderBy,
             include: include,
@@ -240,7 +240,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
 
     public async Task<int> GetCount(Expression<Func<TEntity, bool>> predicate = null, bool ignoreQueryFilters = false)
     {
-        IQueryable<TEntity> query = FormQuery(
+        var query = FormQuery(
             predicate: predicate,
             orderBy: null,
             include: null,
@@ -320,7 +320,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
         {
             //DateTime now = DateTime.UtcNow;
 
-            foreach (TEntity entity in entities)
+            foreach (var entity in entities)
             {
                 entity.Id = default;
 
@@ -340,7 +340,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
     {
         return await HandleSqlExceptionAsync(() =>
         {
-            IQueryable<TEntity> query = AggregateIncludes(includes);
+            var query = AggregateIncludes(includes);
             return ignoreQueryFilters
                 ? query.IgnoreQueryFilters().FirstOrDefaultAsync(filter)
                 : query.FirstOrDefaultAsync(filter);
@@ -559,7 +559,7 @@ public class DataRepository<TEntity, TKey> : IDataRepository<TEntity, TKey>
     {
         try
         {
-            TResult result = await func();
+            var result = await func();
 
             return result;
         }

@@ -12,9 +12,9 @@ public static class ClaimsPrincipalExtensions
             throw new ArgumentNullException(nameof(principal));
         }
 
-        string userIdString = principal.FindFirstValue(GatherUsClaims.Id);
+        var userIdString = principal.FindFirstValue(GatherUsClaims.Id);
 
-        if (!int.TryParse(userIdString, out int userId))
+        if (!int.TryParse(userIdString, out var userId))
         {
             throw new("Cannot convert to int user Id.");
         }
