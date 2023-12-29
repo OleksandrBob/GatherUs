@@ -30,7 +30,7 @@ builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDataContext, DataContext>();
 builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IGuestService, GuestService>();
-builder.Services.AddTransient<IMailingService, MailingService>();
+builder.Services.AddSingleton<IMailingService, MailingService>();
 builder.Services.AddTransient<IOrganizerService, OrganizerService>();
 
 builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
