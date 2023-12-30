@@ -13,9 +13,7 @@ public abstract class User : EntityBase
     public string LastName { get; set; }
 
     public string Password { get; set; }
-
-    public bool IsMailConfirmed { get; set; }
-
+    
     public LoginProvider LoginProvider { get; set; }
 
     public DateTime? DeletionTime { get; set; }

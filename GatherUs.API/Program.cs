@@ -32,6 +32,7 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IGuestService, GuestService>();
 builder.Services.AddSingleton<IMailingService, MailingService>();
 builder.Services.AddTransient<IOrganizerService, OrganizerService>();
+builder.Services.AddScoped<IEmailForRegistrationService, EmailForRegistrationService>();
 
 builder.Services.AddMediatR(c => c.RegisterServicesFromAssemblyContaining<Program>());
 

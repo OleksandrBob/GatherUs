@@ -12,14 +12,14 @@ public static class MailingHelper
 
         var engine = new RazorLightEngineBuilder().Build();
 
-        string key = EnumToFileBindings.GetFileName(type);
+        var key = EnumToFileBindings.GetFileName(type);
         var result = await engine.CompileRenderStringAsync(key, template, data);
         return result;
     }
 
     private static async Task<string> ExtractMailContent(MailType type)
     {
-        string fileName = EnumToFileBindings.GetFileName(type);
+        var fileName = EnumToFileBindings.GetFileName(type);
 
         var path = Assembly.GetExecutingAssembly()
             .GetManifestResourceNames()

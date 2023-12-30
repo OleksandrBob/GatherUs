@@ -30,7 +30,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
     [MaxLength(20)]
     public string Password { get; set; }
 
-    public UserType? Role { get; set; }
+    public short ConfirmationNumber { get; set; }
 
     public class Handler : IRequestHandler<SignUpCommand, Result<object, FormattedError>>
     {
@@ -38,24 +38,26 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
         private readonly IGuestService _guestService;
         private readonly IMailingService _mailingService;
         private readonly IOrganizerService _organizerService;
+        private readonly IEmailForRegistrationService _emailForRegistrationService;
 
         public Handler(
             IUserService userService,
             IGuestService guestService,
             IMailingService mailingService,
-            IOrganizerService organizerService)
+            IOrganizerService organizerService,
+            IEmailForRegistrationService emailForRegistrationService)
         {
             _userService = userService;
             _guestService = guestService;
             _mailingService = mailingService;
             _organizerService = organizerService;
+            _emailForRegistrationService = emailForRegistrationService;
         }
 
         public async Task<Result<object, FormattedError>> Handle(SignUpCommand request,
             CancellationToken cancellationToken)
         {
             var user = await _userService.GetByEmailAsync(request.Mail);
-
             if (user is not null)
             {
                 return Result.Failure<object, FormattedError>(
@@ -67,7 +69,19 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                     });
             }
 
-            return request.Role switch
+            var emailForRegistration = await _emailForRegistrationService.GetEmailForRegistrationAsync(request.Mail);
+            if (emailForRegistration is null)
+            {
+                return Result.Failure<object, FormattedError>(
+                    new()
+                    {
+                        ErrorMessage =
+                            $"Registration request was not sent to email: {request.Mail}",
+                        Args = new() { request.Mail },
+                    });
+            }
+
+            return emailForRegistration.UserType switch
             {
                 UserType.Guest => await RegisterGuest(request),
                 UserType.Organizer => await RegisterOrganizer(request),
@@ -80,7 +94,6 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
             var guestToInsert = new Guest
             {
                 Mail = request.Mail,
-                UserType = UserType.Guest,
                 LastName = request.LastName,
                 Password = request.Password,
                 FirstName = request.FirstName,
@@ -107,7 +120,6 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 LastName = request.LastName,
                 Password = request.Password,
                 FirstName = request.FirstName,
-                UserType = UserType.Organizer,
             };
 
             try

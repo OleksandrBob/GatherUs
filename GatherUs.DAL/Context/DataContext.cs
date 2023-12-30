@@ -20,6 +20,8 @@ public class DataContext : DbContext, IDataContext
     public DbSet<Guest> Guests { get; set; }
 
     public DbSet<Organizer> Organizers { get; set; }
+    
+    public DbSet<EmailForRegistration> EmailForRegistrations { get; set; }
 
     public async Task<int> DefaultEFSaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -63,5 +65,7 @@ public class DataContext : DbContext, IDataContext
             .HasValue<Admin>(UserType.Admin);
         modelBuilder.Entity<User>().Property(u => u.UserType).HasDefaultValue(UserType.Guest);
 
+        modelBuilder.Entity<EmailForRegistration>()
+            .HasAlternateKey(e => e.Email);
     }
 }

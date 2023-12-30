@@ -14,12 +14,15 @@ public class UnitOfWork : IDisposable, IUnitOfWork
     private IDataRepository<User> _users;
     private IDataRepository<Guest> _guests;
     private IDataRepository<Organizer> _organizers;
+    private IDataRepository<EmailForRegistration> _emailForRegistrations;
 
     public IDataRepository<User> Users => _users ??= new DataRepository<User>(_context);
     
     public IDataRepository<Guest> Guests => _guests ??= new DataRepository<Guest>(_context);
 
     public IDataRepository<Organizer> Organizers => _organizers ??= new DataRepository<Organizer>(_context);
+    
+    public IDataRepository<EmailForRegistration> EmailForRegistrations => _emailForRegistrations ??= new DataRepository<EmailForRegistration>(_context);
 
     public UnitOfWork(IDataContext context)
     {

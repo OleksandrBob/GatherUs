@@ -8,6 +8,8 @@ public interface IUnitOfWork
     public IDataRepository<Guest> Guests { get; }
 
     public IDataRepository<Organizer> Organizers { get; }
+    
+    public IDataRepository<EmailForRegistration> EmailForRegistrations { get; }
 
     public IDataRepository<User> Users { get; }
     
