@@ -8,4 +8,6 @@ public interface IMailingService
     Task<Result> SendGuestVerificationMailAsync(Guest guest);
 
     Task<Result> SendOrganizerVerificationMailAsync(Organizer organizer);
+
+    Task<Result> SendMailVerificationCodeAsync(EmailForRegistration emailForRegistration);
 }

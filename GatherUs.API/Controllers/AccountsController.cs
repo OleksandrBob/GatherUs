@@ -17,6 +17,20 @@ public class AccountsController : Controller
     {
         _mediator = mediator;
     }
+
+    [HttpPost("get-confirmation-code")]
+    [AllowAnonymous]
+    public async Task<IActionResult> GetRegistrationConfirmationCode(GetRegistrationConfirmationCodeCommand command)
+    {
+        Result<object, FormattedError> result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok();
+    }
     
     [HttpPost("sign-up")]
     [AllowAnonymous]

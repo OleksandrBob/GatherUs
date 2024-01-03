@@ -6,7 +6,9 @@ namespace GatherUs.Core.Services.Interfaces;
 
 public interface IEmailForRegistrationService
 {
+    Task RemoveEmailForRegistrationAsync(int emailId);
+    
     Task<EmailForRegistration> GetEmailForRegistrationAsync(string email);
 
-    Task<Result> AddEmailForRegistration(string email, UserType userType);
+    Task<Result<EmailForRegistration>> AddEmailForRegistration(string email, UserType userType);
 }

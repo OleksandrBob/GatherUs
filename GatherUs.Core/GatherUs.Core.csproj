@@ -5,6 +5,10 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>disable</Nullable>
     </PropertyGroup>
+    
+    <PropertyGroup>
+        <PreserveCompilationContext>true</PreserveCompilationContext>
+    </PropertyGroup>
 
     <ItemGroup>
       <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3" />
@@ -18,8 +22,10 @@
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Mailing\Templates\OrganizerVerification.cshtml" />
-      <Resource Include="Mailing\Templates\OrganizerVerification.cshtml" />
+      <EmbeddedResource Remove="Mailing\Templates\OrganizerVerification.cshtml" />
+      <EmbeddedResource Include="Mailing\Templates\ConfirmationCode.cshtml" />
+      <EmbeddedResource Include="Mailing\Templates\GuestVerification.cshtml" />
+      <EmbeddedResource Include="Mailing\Templates\OrganizerVerification.cshtml" />
     </ItemGroup>
 
 </Project>

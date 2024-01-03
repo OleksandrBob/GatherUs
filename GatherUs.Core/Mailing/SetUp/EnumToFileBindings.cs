@@ -10,6 +10,7 @@ public static class EnumToFileBindings
         {
             MailType.OrganizerVerification => "OrganizerVerification",
             MailType.GuestVerification => "GuestVerification",
+            MailType.ConfirmationCode => "ConfirmationCode",
             _ => string.Empty,
         };
     }

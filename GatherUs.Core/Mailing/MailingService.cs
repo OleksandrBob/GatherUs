@@ -17,6 +17,35 @@ public class MailingService : IMailingService
         _smtpOptions = smtpOptions;
     }
 
+    public async Task<Result> SendGuestVerificationMailAsync(Guest guest)
+    {
+        return await SendMailAsync(
+            to: guest.Mail,
+            subject: "Confirm email",
+            from: "GatherUs",
+            content: await MailingHelper.GenerateTemplate(MailType.GuestVerification, new UserForMailDto(guest)));
+    }
+
+    public async Task<Result> SendOrganizerVerificationMailAsync(Organizer organizer)
+    {
+        return await SendMailAsync(
+            to: organizer.Mail,
+            subject: "Confirm email",
+            from: "GatherUs",
+            content: await MailingHelper.GenerateTemplate(MailType.OrganizerVerification,
+                new UserForMailDto(organizer)));
+    }
+
+    public async Task<Result> SendMailVerificationCodeAsync(EmailForRegistration emailForRegistration)
+    {
+        return await SendMailAsync(
+            to: emailForRegistration.Email,
+            subject: "Confirm email",
+            from: "GatherUs",
+            content: await MailingHelper.GenerateTemplate(MailType.ConfirmationCode,
+                emailForRegistration.ConfirmationCode));
+    }
+
     private async Task<Result> SendMailAsync(string to, string subject, string content, string from)
     {
         try
@@ -41,24 +70,5 @@ public class MailingService : IMailingService
         {
             return Result.Failure(e.Message);
         }
-    }
-
-    public async Task<Result> SendGuestVerificationMailAsync(Guest guest)
-    {
-        return await SendMailAsync(
-            to: guest.Mail,
-            subject: "Confirm email",
-            from: "GatherUs",
-            content: await MailingHelper.GenerateTemplate(MailType.GuestVerification, new UserForMailDto(guest)));
-    }
-
-    public async Task<Result> SendOrganizerVerificationMailAsync(Organizer organizer)
-    {
-        return await SendMailAsync(
-            to: organizer.Mail,
-            subject: "Confirm email",
-            from: "GatherUs",
-            content: await MailingHelper.GenerateTemplate(MailType.OrganizerVerification,
-                new UserForMailDto(organizer)));
     }
 }

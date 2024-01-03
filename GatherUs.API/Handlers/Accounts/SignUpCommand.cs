@@ -13,7 +13,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
 {
     [Required]
     [EmailAddress(ErrorMessage = "Email is invalid")]
-    public string Mail { get; set; } = null!;
+    public string Mail { get; set; }
 
     [Required]
     [MinLength(2)]
@@ -81,12 +81,30 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                     });
             }
 
-            return emailForRegistration.UserType switch
+            if (request.ConfirmationNumber != emailForRegistration.ConfirmationCode)
+            {
+                return Result.Failure<object, FormattedError>(
+                    new()
+                    {
+                        ErrorMessage =
+                            $"Wrong confirmation code",
+                        Args = new() { request.Mail },
+                    });
+            }
+
+            var signUpResult = emailForRegistration.UserType switch
             {
                 UserType.Guest => await RegisterGuest(request),
                 UserType.Organizer => await RegisterOrganizer(request),
                 _ => Result.Failure<object, FormattedError>(new("Cannot specify user type"))
             };
+
+            if (signUpResult.IsSuccess)
+            {
+                await _emailForRegistrationService.RemoveEmailForRegistrationAsync(emailForRegistration.Id);
+            }
+
+            return signUpResult;
         }
 
         private async Task<Result<object, FormattedError>> RegisterGuest(SignUpCommand request)
@@ -97,6 +115,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 LastName = request.LastName,
                 Password = request.Password,
                 FirstName = request.FirstName,
+                LoginProvider = LoginProvider.GatherUs,
             };
 
             try
@@ -120,6 +139,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 LastName = request.LastName,
                 Password = request.Password,
                 FirstName = request.FirstName,
+                LoginProvider = LoginProvider.GatherUs,
             };
 
             try

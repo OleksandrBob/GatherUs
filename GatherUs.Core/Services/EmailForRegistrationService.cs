@@ -6,7 +6,8 @@ using GatherUs.Enums.DAL;
 
 namespace GatherUs.Core.Services;
 
-public class EmailForRegistrationService : IEmailForRegistrationService
+public class 
+    EmailForRegistrationService : IEmailForRegistrationService
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -14,32 +15,40 @@ public class EmailForRegistrationService : IEmailForRegistrationService
     {
         _unitOfWork = unitOfWork;
     }
+    
+    public async Task RemoveEmailForRegistrationAsync(int emailId)
+    {
+        await _unitOfWork.EmailForRegistrations.Remove(emailId);
+        await _unitOfWork.CompleteAsync();
+    }    
 
     public async Task<EmailForRegistration> GetEmailForRegistrationAsync(string email)
     {
         return await _unitOfWork.EmailForRegistrations.GetFirstOrDefaultAsync(e => e.Email == email);
     }
 
-    public async Task<Result> AddEmailForRegistration(string email, UserType userType)
+    public async Task<Result<EmailForRegistration>> AddEmailForRegistration(string email, UserType userType)
     {
         var alreadyExistMail = await _unitOfWork.EmailForRegistrations.AnyAsync(e => e.Email == email);
         if (alreadyExistMail)
         {
-            return Result.Failure("This mail has already been used for registration process.");
+            return Result.Failure<EmailForRegistration>("This mail has already been used for registration process.");
         }
 
         var alreadyExistUser = await _unitOfWork.Users.AnyAsync(e => e.Mail == email);
         if (alreadyExistUser)
         {
-            return Result.Failure("User with this mail already exist.");
+            return Result.Failure<EmailForRegistration>("User with this mail already exist.");
         }
 
         Random rnd = new();
-        _unitOfWork.EmailForRegistrations.AddNew(new EmailForRegistration
-            { Email = email, UserType = userType, ConfirmationCode = (ushort)rnd.Next(1111, 9999) });
-        
+        var mailToAdd = new EmailForRegistration
+            { Email = email, UserType = userType, ConfirmationCode = (ushort)rnd.Next(1111, 9999) };
+
+        _unitOfWork.EmailForRegistrations.AddNew(mailToAdd);
+
         await _unitOfWork.CompleteAsync();
 
-        return Result.Success();
+        return Result.Success(mailToAdd);
     }
 }
