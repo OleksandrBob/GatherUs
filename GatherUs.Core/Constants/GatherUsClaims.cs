@@ -1,6 +1,6 @@
 namespace GatherUs.Core.Constants;
 
-public class GatherUsClaims
+public static class GatherUsClaims
 {
     public static string Id { get; } = "Id";
 

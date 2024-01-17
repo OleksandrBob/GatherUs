@@ -45,4 +45,18 @@ public class AccountsController : Controller
 
         return Ok();
     }
+    
+    [HttpPost("sign-in")]
+    [AllowAnonymous]
+    public async Task<IActionResult> SignIn(SignInCommand command)
+    {
+        Result<string, FormattedError> result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
 }

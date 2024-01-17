@@ -1,4 +1,6 @@
+using GatherUs.Core.Constants;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GatherUs.API.Controllers;
@@ -15,15 +17,17 @@ public class UserController : Controller
     }
     
     [HttpGet]
+    [Authorize(Roles = AppConstants.OrganizerRole)]
     public IActionResult ListProducts()
     {
         return Ok(1);
     }
 
     [HttpGet("{id}")]
+    [Authorize]
     public IActionResult GetUser([FromRoute]int id)
     {
-
+        var c = User.Claims;
         return BadRequest(id);
     }
 }
