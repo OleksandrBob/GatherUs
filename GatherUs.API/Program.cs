@@ -32,6 +32,7 @@ builder.Services.AddDbContext<DataContext>(o =>
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDataContext, DataContext>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IEventService, EventService>();
 builder.Services.AddTransient<IGuestService, GuestService>();
 builder.Services.AddSingleton<ITokenManager, TokenManager>();
 builder.Services.AddSingleton<IMailingService, MailingService>();

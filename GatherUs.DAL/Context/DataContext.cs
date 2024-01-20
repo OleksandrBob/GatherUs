@@ -21,8 +21,12 @@ public class DataContext : DbContext, IDataContext
 
     public DbSet<Organizer> Organizers { get; set; }
     
+    public DbSet<CustomEvent> CustomEvents { get; set; }
+    
+    public DbSet<AttendanceInvite> AttendanceInvites { get; set; }
+    
     public DbSet<EmailForRegistration> EmailForRegistrations { get; set; }
-
+    
     public async Task<int> DefaultEFSaveChangesAsync(CancellationToken cancellationToken = default)
     {
         return await base.SaveChangesAsync(cancellationToken);
@@ -67,5 +71,27 @@ public class DataContext : DbContext, IDataContext
 
         modelBuilder.Entity<EmailForRegistration>()
             .HasAlternateKey(e => e.Email);
+
+        modelBuilder.Entity<CustomEvent>()
+            .HasOne(e => e.Organizer)
+            .WithMany(e => e.CreatedEvents)
+            .HasForeignKey(e => e.OrganizerId)
+            .OnDelete(DeleteBehavior.NoAction);
+
+        modelBuilder.Entity<CustomEvent>()
+            .HasMany(e => e.Attendants)
+            .WithMany(e => e.PaidEvents);
+
+        modelBuilder.Entity<AttendanceInvite>()
+            .HasOne(e => e.CustomEvent)
+            .WithMany(e => e.Invites)
+            .HasForeignKey(e => e.CustomEventId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<AttendanceInvite>()
+            .HasOne(e => e.Guest)
+            .WithMany(e => e.Invites)
+            .HasForeignKey(e => e.GuestId)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

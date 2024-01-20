@@ -7,26 +7,19 @@ namespace GatherUs.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : Controller
+public class EventController : Controller
 {
     private readonly IMediator _mediator;
-    
-    public UserController(IMediator mediator)
+
+    public EventController(IMediator mediator)
     {
         _mediator = mediator;
     }
     
-    [HttpGet]
+    [HttpPost]
     [Authorize(Roles = AppConstants.OrganizerRole)]
-    public IActionResult ListProducts()
+    public IActionResult CreateEvent()
     {
-        return Ok(1);
-    }
-
-    [HttpGet("{id}")]
-    [Authorize]
-    public IActionResult GetUser([FromRoute]int id)
-    {
-        return BadRequest(id);
+        return null;
     }
 }

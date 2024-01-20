@@ -10,7 +10,7 @@ namespace GatherUs.Core.Services;
 
 public class TokenManager: ITokenManager
 {
-    private static int JwtLifeTimeMinutes => 15;
+    private static int JwtLifeTimeMinutes => 55;
 
     public string GenerateJwt(User user)
     {
