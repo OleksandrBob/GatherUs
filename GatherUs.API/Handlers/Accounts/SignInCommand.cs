@@ -1,5 +1,4 @@
 using System.ComponentModel.DataAnnotations;
-using Azure.Core;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Helpers;

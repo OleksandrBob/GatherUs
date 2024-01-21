@@ -1,4 +1,6 @@
 using System.Text;
+using GatherUs.API.DTO.Event;
+using GatherUs.API.Extensions;
 using GatherUs.Core.Constants;
 using GatherUs.Core.Mailing;
 using GatherUs.Core.Mailing.SetUp;
@@ -39,6 +41,8 @@ builder.Services.AddSingleton<IMailingService, MailingService>();
 builder.Services.AddTransient<IOrganizerService, OrganizerService>();
 builder.Services.AddScoped<IEmailForRegistrationService, EmailForRegistrationService>();
 
+builder.Services.AddAutoMapper(typeof(MappingConfigurations));
+
 builder.Services.AddSwaggerGen(options =>
 {
     options.EnableAnnotations();
@@ -49,7 +53,7 @@ builder.Services.AddSwaggerGen(options =>
     {
         Version = "v1",
         Title = "GatherUs API",
-        Description = "API for GatherUs Product by Oleksandr Bob - 2024",
+        Description = "API for GatherUs by Oleksandr Bob - 2024",
     });
     
     options.AddSecurityDefinition(AppConstants.BearerAuth, new OpenApiSecurityScheme

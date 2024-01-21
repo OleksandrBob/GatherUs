@@ -1,5 +1,3 @@
-using System.Diagnostics;
-
 namespace GatherUs.Core.Mailing.SetUp;
 
 public static class EnumToFileBindings

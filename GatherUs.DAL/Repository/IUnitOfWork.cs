@@ -5,14 +5,18 @@ namespace GatherUs.DAL.Repository;
 
 public interface IUnitOfWork
 {
+    public IDataRepository<User> Users { get; }
+
     public IDataRepository<Guest> Guests { get; }
 
     public IDataRepository<Organizer> Organizers { get; }
-    
+
+    public IDataRepository<CustomEvent> CustomEvents { get; }
+
+    public IDataRepository<AttendanceInvite> AttendanceInvites { get; }
+
     public IDataRepository<EmailForRegistration> EmailForRegistrations { get; }
 
-    public IDataRepository<User> Users { get; }
-    
     Task PerformTransactionAsync(List<Func<Task<Result>>> funcs);
 
     public void Complete(bool withTimeUpdate = true);
