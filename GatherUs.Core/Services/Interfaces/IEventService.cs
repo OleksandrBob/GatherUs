@@ -17,4 +17,12 @@ public interface IEventService
         List<CustomEventCategory> customEventCategories);
 
     Task<List<CustomEvent>> GetEventsByUserId(int userId, bool showPastEvents = false);
+
+    Task<CustomEvent> GetEventById(int eventId);
+
+    Task InviteUser(int guestId, int customEventId, string inviteMessage);
+
+    Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus);
+
+    Task<List<Guest>> GetGuestsInvitedToEvent(int customEventId);
 }

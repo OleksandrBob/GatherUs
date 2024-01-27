@@ -7,11 +7,11 @@ namespace GatherUs.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UserController : Controller
+public class UsersController : Controller
 {
     private readonly IMediator _mediator;
     
-    public UserController(IMediator mediator)
+    public UsersController(IMediator mediator)
     {
         _mediator = mediator;
     }

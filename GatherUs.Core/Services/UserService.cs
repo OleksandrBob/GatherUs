@@ -8,12 +8,15 @@ namespace GatherUs.Core.Services;
 public class UserService : IUserService
 {
     private readonly IUnitOfWork _unitOfWork;
-    
+
     public UserService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
     }
-    
+
     public async Task<User> GetByEmailAsync(string email, params Expression<Func<User, object>>[] includes)
-        => await _unitOfWork.Users.GetByAsync(c => c.Mail == email, includes: includes);   
+        => await _unitOfWork.Users.GetByAsync(c => c.Mail == email, includes: includes);
+
+    public async Task<User> GetByIdAsync(int id, params Expression<Func<User, object>>[] includes)
+        => await _unitOfWork.Users.GetByAsync(c => c.Id == id, includes: includes);
 }
