@@ -20,7 +20,6 @@ public abstract class RabbitMqConnector
         {
             _connection = null;
             _channel = null;
-            return;
         }
     }
 
