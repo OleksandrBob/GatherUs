@@ -21,7 +21,7 @@ public class MailingService : IMailingService
     {
         return await SendMailAsync(
             to: guest.Mail,
-            subject: "Confirm email",
+            subject: "Welcome!",
             from: "GatherUs",
             content: await MailingHelper.GenerateTemplate(MailType.GuestVerification, new UserForMailDto(guest)));
     }
@@ -30,7 +30,7 @@ public class MailingService : IMailingService
     {
         return await SendMailAsync(
             to: organizer.Mail,
-            subject: "Confirm email",
+            subject: "Welcome!",
             from: "GatherUs",
             content: await MailingHelper.GenerateTemplate(MailType.OrganizerVerification,
                 new UserForMailDto(organizer)));

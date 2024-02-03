@@ -101,4 +101,18 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
+    
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetEvents([FromQuery] SearchEventQuery command)
+    {
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
+    }
 }
