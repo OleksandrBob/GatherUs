@@ -1,3 +1,4 @@
+using AutoMapper;
 using CSharpFunctionalExtensions;
 using GatherUs.API.DTO.Event;
 using GatherUs.Core.Errors;
@@ -32,16 +33,30 @@ public class SearchEventQuery : IRequest<Result<List<CustomEventDto>, FormattedE
     public class Handler : IRequestHandler<SearchEventQuery, Result<List<CustomEventDto>, FormattedError>>
     {
         private readonly IEventService _eventService;
+        private readonly IMapper _mapper;
 
-        public Handler(IEventService eventService)
+        public Handler(IEventService eventService, IMapper mapper)
         {
             _eventService = eventService;
+            _mapper = mapper;
         }
 
-        public Task<Result<List<CustomEventDto>, FormattedError>> Handle(SearchEventQuery request,
+        public async Task<Result<List<CustomEventDto>, FormattedError>> Handle(SearchEventQuery request,
             CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            var events = await _eventService.GetFilteredEvents(
+                request.SearchString,
+                request.FromDate,
+                request.ToDate,
+                request.FromMinRequiredAge,
+                request.ToMinRequiredAge,
+                request.FromTicketPrice,
+                request.ToTicketPrice,
+                request.CustomEventTypes,
+                request.CustomEventLocationTypes,
+                request.CustomEventCategories);
+
+            return _mapper.Map<List<CustomEventDto>>(events);
         }
     }
 }

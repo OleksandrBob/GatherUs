@@ -66,6 +66,23 @@ public class EventsController : Controller
         return BadRequest(result.Error);
     }
 
+    [HttpPost("invites/{id}")]
+    [Authorize(Roles = AppConstants.GuestRole)]
+    public async Task<IActionResult> SetEventStatus([FromRoute] int id, [FromBody] SetInviteStatusCommand command)
+    {
+        command.InviteId = id;
+        command.GuestId = User.GetLoggedInUserId();
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok();
+        }
+
+        return BadRequest(result.Error);
+    }
+
     [HttpGet("{id}/invites")]
     [Authorize(Roles = AppConstants.OrganizerRole)]
     public async Task<IActionResult> GetInvitedGuests([FromRoute] int id)
@@ -85,7 +102,7 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
-    
+
     [HttpGet("invites")]
     [Authorize(Roles = AppConstants.GuestRole)]
     public async Task<IActionResult> GetGuestInvites([FromQuery] GetGuestInvitesQuery command)
@@ -101,7 +118,7 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
-    
+
     [HttpGet]
     [Authorize]
     public async Task<IActionResult> GetEvents([FromQuery] SearchEventQuery command)

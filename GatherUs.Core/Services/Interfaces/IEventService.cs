@@ -25,4 +25,18 @@ public interface IEventService
     Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus);
 
     Task<List<Guest>> GetGuestsInvitedToEvent(int customEventId);
+
+    Task<List<CustomEvent>> GetFilteredEvents(
+        string searchString,
+        DateTime? fromDate,
+        DateTime? toDate,
+        byte? fromMinRequiredAge,
+        byte? toMinRequiredAge,
+        decimal? fromTicketPrice,
+        decimal? toTicketPrice,
+        List<CustomEventType> customEventTypes,
+        List<CustomEventLocationType> customEventLocationTypes,
+        List<CustomEventCategory> customEventCategories);
+
+    Task<InviteStatus> SetInviteStatus(int inviteId, InviteStatus newStatus);
 }
