@@ -20,7 +20,7 @@ public interface IEventService
 
     Task<CustomEvent> GetEventById(int eventId);
 
-    Task InviteUser(int guestId, int customEventId, string inviteMessage);
+    Task<AttendanceInvite> InviteUser(int guestId, int customEventId, string inviteMessage);
 
     Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus);
 

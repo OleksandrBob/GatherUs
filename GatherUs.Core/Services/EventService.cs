@@ -65,7 +65,7 @@ public class EventService : IEventService
         return await _unitOfWork.CustomEvents.GetFirstOrDefaultAsync(e => e.Id == eventId);
     }
 
-    public async Task InviteUser(int guestId, int customEventId, string inviteMessage)
+    public async Task<AttendanceInvite> InviteUser(int guestId, int customEventId, string inviteMessage)
     {
         AttendanceInvite invite = new()
         {
@@ -76,8 +76,9 @@ public class EventService : IEventService
         };
 
         _unitOfWork.AttendanceInvites.AddNew(invite);
-
         await _unitOfWork.CompleteAsync();
+
+        return invite;
     }
 
     public async Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus)
@@ -106,21 +107,22 @@ public class EventService : IEventService
         List<CustomEventLocationType> customEventLocationTypes,
         List<CustomEventCategory> customEventCategories)
     {
-        var predicate = PredicateBuilder.New<CustomEvent>(true);
+        var predicate = PredicateBuilder.New<CustomEvent>(c => c.CustomEventType != CustomEventType.Meeting);
 
         if (searchString is not null)
         {
-            predicate = predicate.And(e => e.Name.Contains(searchString) || e.Description.Contains(searchString));
+            predicate = predicate.And(e =>
+                e.Name.ToLower().Contains(searchString) || e.Description.ToLower().Contains(searchString));
         }
 
         if (fromDate.HasValue)
         {
-            predicate = predicate.And(e => e.StartTimeUtc > fromDate.Value);
+            predicate = predicate.And(e => e.StartTimeUtc >= fromDate.Value);
         }
 
         if (toDate.HasValue)
         {
-            predicate = predicate.And(e => e.StartTimeUtc < toDate.Value);
+            predicate = predicate.And(e => e.StartTimeUtc <= toDate.Value);
         }
 
         if (fromMinRequiredAge.HasValue)
@@ -130,7 +132,7 @@ public class EventService : IEventService
 
         if (toMinRequiredAge.HasValue)
         {
-            predicate = predicate.And(e => e.MinRequiredAge <= fromMinRequiredAge);
+            predicate = predicate.And(e => e.MinRequiredAge <= toMinRequiredAge);
         }
 
         if (fromTicketPrice.HasValue)
@@ -155,7 +157,14 @@ public class EventService : IEventService
 
         if (customEventCategories is not null)
         {
-            predicate = predicate.And(e => customEventCategories.Intersect(e.CustomEventCategories).Any());
+            var pred = PredicateBuilder.New<CustomEvent>(false);
+
+            foreach (var category in customEventCategories)
+            {
+                pred = pred.Or(c => c.CustomEventCategories.Contains(category));
+            }
+
+            predicate = predicate.And(pred);
         }
 
         return await _unitOfWork.CustomEvents.GetAllAsync(predicate);

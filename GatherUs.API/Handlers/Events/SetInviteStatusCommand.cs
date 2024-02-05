@@ -24,6 +24,11 @@ public class SetInviteStatusCommand : IRequest<Result>
 
         public async Task<Result> Handle(SetInviteStatusCommand request, CancellationToken cancellationToken)
         {
+            if (request.InviteStatus == InviteStatus.Pending)
+            {
+                return Result.Failure("Cannot choose this status");
+            }
+
             try
             {
                 await _eventService.SetInviteStatus(request.InviteId, request.InviteStatus);

@@ -1,5 +1,6 @@
 using System.Text;
 using GatherUs.Core.Mailing;
+using GatherUs.Core.Mailing.Dto;
 using GatherUs.Core.Mailing.SetUp;
 using GatherUs.Core.RabbitMq.Interfaces;
 using GatherUs.DAL.Models;
@@ -77,6 +78,10 @@ public class RabbitMqMessageConsumer : RabbitMqConnector, IMessageConsumer
             case MailType.OrganizerVerification:
                 await _mailingService.SendOrganizerVerificationMailAsync((message.MessageValue as JObject)
                     .ToObject<Organizer>());
+                break;
+            case MailType.AttendanceInvite:
+                await _mailingService.SendInviteMailAsync((message.MessageValue as JObject)
+                    .ToObject<AttendanceInvite>());
                 break;
             default:
                 throw new ArgumentOutOfRangeException();

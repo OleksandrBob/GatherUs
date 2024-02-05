@@ -46,6 +46,16 @@ public class MailingService : IMailingService
                 emailForRegistration.ConfirmationCode));
     }
 
+    public async Task<Result> SendInviteMailAsync(AttendanceInvite invite)
+    {
+        return await SendMailAsync(
+            to: invite.Guest.Mail,
+            subject: "Invitation!",
+            from: invite.CustomEvent.Name,
+            content: await MailingHelper.GenerateTemplate(MailType.AttendanceInvite,
+                new AttendanceDto(invite)));
+    }
+
     private async Task<Result> SendMailAsync(string to, string subject, string content, string from)
     {
         try

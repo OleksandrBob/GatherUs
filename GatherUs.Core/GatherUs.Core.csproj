@@ -28,6 +28,7 @@
       <EmbeddedResource Include="Mailing\Templates\ConfirmationCode.cshtml" />
       <EmbeddedResource Include="Mailing\Templates\GuestVerification.cshtml" />
       <EmbeddedResource Include="Mailing\Templates\OrganizerVerification.cshtml" />
+      <EmbeddedResource Include="Mailing\Templates\AttendanceInvite.cshtml" />
     </ItemGroup>
 
 </Project>

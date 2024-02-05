@@ -1,3 +1,6 @@
+using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Runtime.InteropServices;
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using GatherUs.API.DTO.Event;
@@ -5,6 +8,7 @@ using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.Enums.DAL;
 using MediatR;
+using Swashbuckle.AspNetCore.Annotations;
 
 namespace GatherUs.API.Handlers.Events;
 
@@ -24,11 +28,14 @@ public class SearchEventQuery : IRequest<Result<List<CustomEventDto>, FormattedE
 
     public decimal? ToTicketPrice { get; set; }
 
-    public List<CustomEventType> CustomEventTypes { get; set; }
+    [SwaggerParameter(Required = false)]
+    public List<CustomEventType>? CustomEventTypes { get; set; } = null;
 
-    public List<CustomEventLocationType> CustomEventLocationTypes { get; set; }
+    [SwaggerParameter(Required = false)]
+    public List<CustomEventLocationType>? CustomEventLocationTypes { get; set; } = null;
 
-    public List<CustomEventCategory> CustomEventCategories { get; set; }
+    [SwaggerParameter(Required = false)]
+    public List<CustomEventCategory>? CustomEventCategories { get; set; } = null;
 
     public class Handler : IRequestHandler<SearchEventQuery, Result<List<CustomEventDto>, FormattedError>>
     {

@@ -14,5 +14,5 @@ public enum CustomEventCategory
     Cardiology = 7,
     Pediatrics = 8,
     Surgery=9,
-    Dentistry=10,Ц
+    Dentistry=10,
 }
