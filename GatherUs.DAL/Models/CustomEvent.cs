@@ -14,6 +14,8 @@ public class CustomEvent : EntityBase
 
     public List<Guest> Attendants { get; set; }
 
+    public List<CustomEventGuest> CustomEventGuests { get; set; }
+
     public List<AttendanceInvite> Invites { get; set; }
 
     public DateTime StartTimeUtc { get; set; }

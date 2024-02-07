@@ -18,12 +18,10 @@ public class EventsController : Controller
         _mediator = mediator;
     }
 
-    [HttpPost]
-    [Authorize(Roles = AppConstants.OrganizerRole)]
-    public async Task<IActionResult> CreateEvent([FromBody] CreateEventCommand command)
+    [HttpGet]
+    [Authorize]
+    public async Task<IActionResult> GetEvents([FromQuery] SearchEventQuery command)
     {
-        command.OrganizerId = User.GetLoggedInUserId();
-
         var result = await _mediator.Send(command);
 
         if (result.IsSuccess)
@@ -37,6 +35,43 @@ public class EventsController : Controller
     [HttpGet("currentUser")]
     [Authorize]
     public async Task<IActionResult> GetCurrentUserEvents([FromQuery] GetCurrentUserEventsQuery command)
+    {
+        command.OrganizerId = User.GetLoggedInUserId();
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
+    }
+
+    [HttpPost("{id}/attend")]
+    [Authorize(Roles = AppConstants.OrganizerRole)]
+    public async Task<IActionResult> AttendEvent([FromRoute] int id)
+    {
+        AttendEventCommand command =
+            new()
+            {
+                GuestId = User.GetLoggedInUserId(),
+                EventId = id,
+            };
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result);
+        }
+
+        return BadRequest(result.Error);
+    }
+
+    [HttpPost]
+    [Authorize(Roles = AppConstants.OrganizerRole)]
+    public async Task<IActionResult> CreateEvent([FromBody] CreateEventCommand command)
     {
         command.OrganizerId = User.GetLoggedInUserId();
 
@@ -68,10 +103,9 @@ public class EventsController : Controller
 
     [HttpPost("invites/{id}")]
     [Authorize(Roles = AppConstants.GuestRole)]
-    public async Task<IActionResult> SetEventStatus([FromRoute] int id, [FromBody] SetInviteStatusCommand command)
+    public async Task<IActionResult> SetInviteStatus([FromRoute] int id, [FromBody] SetInviteStatusCommand command)
     {
         command.InviteId = id;
-        command.GuestId = User.GetLoggedInUserId();
 
         var result = await _mediator.Send(command);
 
@@ -109,20 +143,6 @@ public class EventsController : Controller
     {
         command.GuestId = User.GetLoggedInUserId();
 
-        var result = await _mediator.Send(command);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-
-        return BadRequest(result.Error);
-    }
-
-    [HttpGet]
-    [Authorize]
-    public async Task<IActionResult> GetEvents([FromQuery] SearchEventQuery command)
-    {
         var result = await _mediator.Send(command);
 
         if (result.IsSuccess)

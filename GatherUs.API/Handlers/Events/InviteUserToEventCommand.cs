@@ -77,6 +77,13 @@ public class InviteUserToEventCommand : IRequest<Result>
             {
                 return Result.Failure("You can only invite to a 'Conference' or a 'Meeting'.");
             }
+            
+            var guests = await _eventService.GetGuestsInvitedToEvent(request.CustomEventId);
+
+            if (guests.Any(g => g.Id == request.GuestId))
+            {
+                return Result.Failure("Guest is already invited.");
+            }
 
             try
             {

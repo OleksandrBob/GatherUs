@@ -16,5 +16,7 @@ public abstract class User : EntityBase
     
     public LoginProvider LoginProvider { get; set; }
 
+    public decimal Balance { get; set; }
+
     public DateTime? DeletionTime { get; set; }
 }

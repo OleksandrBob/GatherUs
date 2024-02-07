@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
 using GatherUs.DAL.Repository;
@@ -170,14 +171,54 @@ public class EventService : IEventService
         return await _unitOfWork.CustomEvents.GetAllAsync(predicate);
     }
 
-    public async Task<InviteStatus> SetInviteStatus(int inviteId, InviteStatus newStatus)
+    public async Task<Result<AttendanceInvite>> SetInviteStatus(AttendanceInvite invite, InviteStatus newStatus)
     {
-        var invite = await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i => i.Id == inviteId);
         invite.InviteStatus = newStatus;
         _unitOfWork.AttendanceInvites.Update(invite);
 
         await _unitOfWork.CompleteAsync();
 
-        return invite.InviteStatus;
+        return Result.Success(invite);
+    }
+
+    public async Task<Result> AddAttendantToEvent(int customEventId, int guestId)
+    {
+        var customEvent =
+            await _unitOfWork.CustomEvents.GetFirstOrDefaultAsync(e => e.Id == customEventId,
+                include: i => i.Include(e => e.Attendants), disableTracking: false);
+
+        if (customEvent is null)
+        {
+            return Result.Failure("Event doesnt exist");
+        }
+
+        var guest = await _unitOfWork.Guests.GetFirstOrDefaultAsync(g => g.Id == guestId, disableTracking: false);
+
+        if (guest is null)
+        {
+            return Result.Failure("Guest with this id doesnt exist");
+        }
+
+        if (customEvent.TicketPrice > guest.Balance)
+        {
+            return Result.Failure("Not enough money on your balance to attend.");
+        }
+
+        var organizer =
+            await _unitOfWork.Organizers.GetFirstOrDefaultAsync(o => o.Id == customEvent.OrganizerId,
+                disableTracking: false);
+
+        var fee = Math.Round(customEvent.TicketPrice * 0.05m, 2);
+
+        guest.Balance -= customEvent.TicketPrice;
+        organizer.Balance += customEvent.TicketPrice - fee;
+
+        //TODO: set fee to GatherUs
+
+        customEvent.Attendants.Add(guest);
+
+        await _unitOfWork.CompleteAsync();
+
+        return Result.Success();
     }
 }

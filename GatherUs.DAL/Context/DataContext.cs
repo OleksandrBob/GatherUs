@@ -71,7 +71,7 @@ public class DataContext : DbContext, IDataContext
 
         modelBuilder.Entity<EmailForRegistration>()
             .HasAlternateKey(e => e.Email);
-
+            
         modelBuilder.Entity<CustomEvent>()
             .HasOne(e => e.Organizer)
             .WithMany(e => e.CreatedEvents)
@@ -80,8 +80,23 @@ public class DataContext : DbContext, IDataContext
 
         modelBuilder.Entity<CustomEvent>()
             .HasMany(e => e.Attendants)
-            .WithMany(e => e.PaidEvents);
+            .WithMany(e => e.PaidEvents)
+            .UsingEntity<CustomEventGuest>(
+                joinEntity =>
+                {
+                    joinEntity.HasOne(customEventGuest => customEventGuest.CustomEvent)
+                        .WithMany(customEvent => customEvent.CustomEventGuests)
+                        .HasForeignKey(customEventGuest => customEventGuest.CustomEventId)
+                        .OnDelete(DeleteBehavior.Restrict);
 
+                    joinEntity.HasOne(customEventGuest => customEventGuest.Guest)
+                        .WithMany(guest => guest.CustomEventGuests)
+                        .HasForeignKey(customEventGuest => customEventGuest.GuestId)
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    joinEntity.HasKey(x => new { x.GuestId, x.CustomEventId });
+                });
+        
         modelBuilder.Entity<AttendanceInvite>()
             .HasOne(e => e.CustomEvent)
             .WithMany(e => e.Invites)

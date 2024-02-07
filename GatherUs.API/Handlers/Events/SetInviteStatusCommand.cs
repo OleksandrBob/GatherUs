@@ -1,5 +1,6 @@
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Services.Interfaces;
+using GatherUs.DAL.Repository;
 using GatherUs.Enums.DAL;
 using MediatR;
 
@@ -9,17 +10,17 @@ public class SetInviteStatusCommand : IRequest<Result>
 {
     internal int InviteId { get; set; }
 
-    internal int GuestId { get; set; }
-
     public InviteStatus InviteStatus { get; set; }
 
     public class Handler : IRequestHandler<SetInviteStatusCommand, Result>
     {
         private readonly IEventService _eventService;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public Handler(IEventService eventService)
+        public Handler(IEventService eventService, IUnitOfWork unitOfWork)
         {
             _eventService = eventService;
+            _unitOfWork = unitOfWork;
         }
 
         public async Task<Result> Handle(SetInviteStatusCommand request, CancellationToken cancellationToken)
@@ -31,7 +32,24 @@ public class SetInviteStatusCommand : IRequest<Result>
 
             try
             {
-                await _eventService.SetInviteStatus(request.InviteId, request.InviteStatus);
+                var invite = await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i => i.Id == request.InviteId);
+
+                if (request.InviteStatus == InviteStatus.Accepted)
+                {
+                    var addingResult = await _eventService.AddAttendantToEvent(invite.CustomEventId, invite.GuestId);
+
+                    if (addingResult.IsFailure)
+                    {
+                        return addingResult;
+                    }
+                }
+
+                var inv = await _eventService.SetInviteStatus(invite, request.InviteStatus);
+
+                if (inv.IsFailure)
+                {
+                    return inv;
+                }
             }
             catch (Exception e)
             {

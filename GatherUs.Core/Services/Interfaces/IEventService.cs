@@ -1,3 +1,4 @@
+using CSharpFunctionalExtensions;
 using GatherUs.DAL.Models;
 using GatherUs.Enums.DAL;
 
@@ -38,5 +39,7 @@ public interface IEventService
         List<CustomEventLocationType> customEventLocationTypes,
         List<CustomEventCategory> customEventCategories);
 
-    Task<InviteStatus> SetInviteStatus(int inviteId, InviteStatus newStatus);
+    Task<Result<AttendanceInvite>> SetInviteStatus(AttendanceInvite invite, InviteStatus newStatus);
+
+    Task<Result> AddAttendantToEvent(int customEventId, int guestId);
 }
