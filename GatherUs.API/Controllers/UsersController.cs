@@ -1,3 +1,5 @@
+using GatherUs.API.Extensions;
+using GatherUs.API.Handlers.Users;
 using GatherUs.Core.Constants;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -10,12 +12,12 @@ namespace GatherUs.API.Controllers;
 public class UsersController : Controller
 {
     private readonly IMediator _mediator;
-    
+
     public UsersController(IMediator mediator)
     {
         _mediator = mediator;
     }
-    
+
     [HttpGet]
     [Authorize(Roles = AppConstants.OrganizerRole)]
     public IActionResult ListProducts()
@@ -23,10 +25,38 @@ public class UsersController : Controller
         return Ok(1);
     }
 
-    [HttpGet("{id}")]
+    [HttpGet("current")]
     [Authorize]
-    public IActionResult GetUser([FromRoute]int id)
+    public async Task<IActionResult> GetCurrentUserData()
     {
-        return BadRequest(id);
+        GetUserDataQuery command = new()
+        {
+            UserId = User.GetLoggedInUserId(),
+        };
+        
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
+
+    [HttpPut("current")]
+    [Authorize]
+    public async Task<IActionResult> UpdateCurrentUserData(UpdateCurrentUserDataCommand command)
+    {
+        command.UserId = User.GetLoggedInUserId();
+        
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok();
     }
 }

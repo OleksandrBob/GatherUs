@@ -18,5 +18,7 @@ public abstract class User : EntityBase
 
     public decimal Balance { get; set; }
 
+    public string ProfilePictureUrl { get; set; }
+
     public DateTime? DeletionTime { get; set; }
 }

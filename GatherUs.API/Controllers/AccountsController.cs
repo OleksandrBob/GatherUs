@@ -51,7 +51,7 @@ public class AccountsController : Controller
     public async Task<IActionResult> SignIn(SignInCommand command)
     {
         Result<string, FormattedError> result = await _mediator.Send(command);
-
+        
         if (result.IsFailure)
         {
             return BadRequest(result.Error);
