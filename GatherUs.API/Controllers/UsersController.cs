@@ -33,7 +33,7 @@ public class UsersController : Controller
         {
             UserId = User.GetLoggedInUserId(),
         };
-        
+
         var result = await _mediator.Send(command);
 
         if (result.IsFailure)
@@ -49,9 +49,25 @@ public class UsersController : Controller
     public async Task<IActionResult> UpdateCurrentUserData(UpdateCurrentUserDataCommand command)
     {
         command.UserId = User.GetLoggedInUserId();
-        
+
         var result = await _mediator.Send(command);
 
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok();
+    }
+
+    [HttpDelete("current/picture")]
+    [Authorize]
+    public async Task<IActionResult> RemoveUserPicture()
+    {
+        var command = new RemoveUserPictureCommand { CurrentUserId = User.GetLoggedInUserId() };
+
+        var result = await _mediator.Send(command);
+        
         if (result.IsFailure)
         {
             return BadRequest(result.Error);

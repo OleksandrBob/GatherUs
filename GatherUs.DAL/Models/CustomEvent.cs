@@ -23,6 +23,8 @@ public class CustomEvent : EntityBase
     public byte MinRequiredAge { get; set; }
 
     public decimal TicketPrice { get; set; }
+    
+    public string PictureUrl { get; set; }
 
     public CustomEventType CustomEventType { get; set; }
 

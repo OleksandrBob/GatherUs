@@ -18,9 +18,9 @@ public class EventsController : Controller
         _mediator = mediator;
     }
 
-    [HttpGet]
+    [HttpPost("search")]
     [Authorize]
-    public async Task<IActionResult> GetEvents([FromQuery] SearchEventQuery command)
+    public async Task<IActionResult> GetEvents([FromBody] SearchEventQuery command)
     {
         var result = await _mediator.Send(command);
 

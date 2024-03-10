@@ -1,6 +1,3 @@
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Runtime.InteropServices;
 using AutoMapper;
 using CSharpFunctionalExtensions;
 using GatherUs.API.DTO.Event;
@@ -8,6 +5,7 @@ using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.Enums.DAL;
 using MediatR;
+using System;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GatherUs.API.Handlers.Events;
@@ -51,6 +49,16 @@ public class SearchEventQuery : IRequest<Result<List<CustomEventDto>, FormattedE
         public async Task<Result<List<CustomEventDto>, FormattedError>> Handle(SearchEventQuery request,
             CancellationToken cancellationToken)
         {
+            if (request.FromDate.HasValue)
+            {
+                request.FromDate = DateTime.SpecifyKind(request.FromDate.Value, DateTimeKind.Utc);
+            }
+            
+            if (request.ToDate.HasValue)
+            {
+                request.ToDate = DateTime.SpecifyKind(request.ToDate.Value, DateTimeKind.Utc);
+            }
+
             var events = await _eventService.GetFilteredEvents(
                 request.SearchString,
                 request.FromDate,
