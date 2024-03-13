@@ -18,6 +18,21 @@ public class EventsController : Controller
         _mediator = mediator;
     }
 
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<IActionResult> GetEventInfo([FromRoute] int id)
+    {
+        var command = new GetEventInfoQuery { EventId = id };
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
+    }
+
     [HttpPost("search")]
     [Authorize]
     public async Task<IActionResult> GetEvents([FromBody] SearchEventQuery command)

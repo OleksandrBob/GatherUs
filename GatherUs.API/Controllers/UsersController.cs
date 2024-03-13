@@ -67,12 +67,28 @@ public class UsersController : Controller
         var command = new RemoveUserPictureCommand { CurrentUserId = User.GetLoggedInUserId() };
 
         var result = await _mediator.Send(command);
-        
+
         if (result.IsFailure)
         {
             return BadRequest(result.Error);
         }
 
         return Ok();
+    }
+
+    [HttpPut("current/picture")]
+    [Authorize]
+    public async Task<IActionResult> UploadUserPicture([FromBody]UploadUserPictureCommand command)
+    {
+        command.CurrentUserId = User.GetLoggedInUserId();
+        
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 }
