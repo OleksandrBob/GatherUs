@@ -42,6 +42,7 @@ builder.Services.AddSingleton<IMessageConsumer, RabbitMqMessageConsumer>();
 builder.Services.AddSingleton<IMessagePublisher, RabbitMqMessagePublisher>();
 builder.Services.AddSingleton<IMailingService, MailingService>();
 builder.Services.AddTransient<IOrganizerService, OrganizerService>();
+builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IEmailForRegistrationService, EmailForRegistrationService>();
 
 builder.Services.AddHostedService<QueueMessageConsumerBackgroundServise>();

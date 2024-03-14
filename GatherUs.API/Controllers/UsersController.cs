@@ -1,6 +1,7 @@
 using GatherUs.API.Extensions;
 using GatherUs.API.Handlers.Users;
 using GatherUs.Core.Constants;
+using GatherUs.Core.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,12 @@ namespace GatherUs.API.Controllers;
 public class UsersController : Controller
 {
     private readonly IMediator _mediator;
+    private readonly IPaymentService _paymentService;
 
-    public UsersController(IMediator mediator)
+    public UsersController(IMediator mediator, IPaymentService paymentService)
     {
         _mediator = mediator;
+        _paymentService = paymentService;
     }
 
     [HttpGet]
@@ -90,5 +93,22 @@ public class UsersController : Controller
         }
 
         return Ok(result.Value);
+    }
+    
+    [HttpGet("current/payment-token")]
+    [Authorize]
+    public IActionResult GetPaymentToken()
+    {
+        var token = _paymentService.GenerateClientToken(User.GetLoggedInUserId());
+
+        return Ok(token);
+    }
+    
+    [HttpPost("current/process-payment")]
+    [Authorize]
+    public IActionResult ProcessPayment(string nonce)
+    {
+        var token = _paymentService.ProcessPayment(nonce);
+        return Ok(token);
     }
 }

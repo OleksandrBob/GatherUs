@@ -12,6 +12,7 @@
 
     <ItemGroup>
       <PackageReference Include="Azure.Storage.Blobs" Version="12.19.1" />
+      <PackageReference Include="Braintree" Version="5.24.0" />
       <PackageReference Include="CSharpFunctionalExtensions" Version="2.40.3" />
       <PackageReference Include="MailKit" Version="4.3.0" />
       <PackageReference Include="MimeKit" Version="4.3.0" />
