@@ -39,7 +39,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
     {
         private readonly IUserService _userService;
         private readonly IGuestService _guestService;
-        private readonly IMailingService _mailingService;
+        private readonly IPaymentService _paymentService;
         private readonly IMessagePublisher _messagePublisher;
         private readonly IOrganizerService _organizerService;
         private readonly IEmailForRegistrationService _emailForRegistrationService;
@@ -47,14 +47,14 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
         public Handler(
             IUserService userService,
             IGuestService guestService,
-            IMailingService mailingService,
+            IPaymentService paymentService,
             IMessagePublisher messagePublisher,
             IOrganizerService organizerService,
             IEmailForRegistrationService emailForRegistrationService)
         {
             _userService = userService;
             _guestService = guestService;
-            _mailingService = mailingService;
+            _paymentService = paymentService;
             _messagePublisher = messagePublisher;
             _organizerService = organizerService;
             _emailForRegistrationService = emailForRegistrationService;
@@ -110,6 +110,8 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 await _emailForRegistrationService.RemoveEmailForRegistrationAsync(emailForRegistration.Id);
             }
 
+            await _paymentService.CreateUser(request.Mail, request.FirstName, request.LastName);
+
             return signUpResult;
         }
 
@@ -159,7 +161,8 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 {
                     Type = MailType.OrganizerVerification,
                     MessageValue = organizerToInsert,
-                });            }
+                });
+            }
             catch (Exception ex)
             {
                 return Result.Failure(ex.Message);

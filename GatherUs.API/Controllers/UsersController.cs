@@ -81,10 +81,10 @@ public class UsersController : Controller
 
     [HttpPut("current/picture")]
     [Authorize]
-    public async Task<IActionResult> UploadUserPicture([FromBody]UploadUserPictureCommand command)
+    public async Task<IActionResult> UploadUserPicture([FromBody] UploadUserPictureCommand command)
     {
         command.CurrentUserId = User.GetLoggedInUserId();
-        
+
         var result = await _mediator.Send(command);
 
         if (result.IsFailure)
@@ -94,21 +94,36 @@ public class UsersController : Controller
 
         return Ok(result.Value);
     }
-    
+
     [HttpGet("current/payment-token")]
     [Authorize]
-    public IActionResult GetPaymentToken()
+    public async Task<IActionResult> GetPaymentToken()
     {
-        var token = _paymentService.GenerateClientToken(User.GetLoggedInUserId());
+        var command = new GetPaymentTokenQuery { UserId = User.GetLoggedInUserId() };
 
-        return Ok(token);
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
     }
-    
-    [HttpPost("current/process-payment")]
+
+    [HttpPost("current/replenish-balance")]
     [Authorize]
-    public IActionResult ProcessPayment(string nonce)
+    public async Task<IActionResult> ReplenishBalance([FromBody] ReplenishBalanceCommand command)
     {
-        var token = _paymentService.ProcessPayment(nonce);
-        return Ok(token);
+        command.UserId = User.GetLoggedInUserId();
+        
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
     }
 }

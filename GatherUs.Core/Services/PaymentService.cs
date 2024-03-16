@@ -1,14 +1,17 @@
 using GatherUs.Core.Services.Interfaces;
-
+using CSharpFunctionalExtensions;
 namespace GatherUs.Core.Services;
 using Braintree;
 
 public class PaymentService : IPaymentService
 {
+    private readonly IUserService _userService;
     private readonly BraintreeGateway _apiGateway;
 
-    public PaymentService()
+    public PaymentService(IUserService userService)
     {
+        _userService = userService;
+
         //TODO: get params fom env
         _apiGateway = new()
         {
@@ -19,19 +22,21 @@ public class PaymentService : IPaymentService
         };
     }
 
-    public string GenerateClientToken(int userId)
+    public async Task<string> GenerateClientToken(int userId)
     {
-        return _apiGateway.ClientToken.Generate(new ClientTokenRequest
+        var user = await _userService.GetByIdAsync(userId);
+
+        return await _apiGateway.ClientToken.GenerateAsync(new ClientTokenRequest
         {
-            CustomerId = "19865428271",
+            CustomerId = user.BrainTreeId,
         });
     }
 
-    public async Task ProcessPayment(string nonce)
+    public async Task<Result> ReplenishBalance(int userId, string nonce, decimal amount)
     {
-        TransactionRequest request = new TransactionRequest
+        var request = new TransactionRequest
         {
-            Amount = 1000.00M,
+            Amount = amount,
             PaymentMethodNonce = nonce,
             Options = new TransactionOptionsRequest
             {
@@ -39,21 +44,29 @@ public class PaymentService : IPaymentService
             }
         };
 
-        Result<Transaction> result = await _apiGateway.Transaction.SaleAsync(request);
+        var result = await _apiGateway.Transaction.SaleAsync(request);
+        if (result.Errors is not null)
+        {
+            return Result.Failure("Could not complete payment");
+        }
+
+        await _userService.AddMoney(userId, amount);
+
+        return Result.Success();
     }
 
-    public string CreateCustomer()
+    public async Task<string> CreateUser(string email, string firstName, string lastName)
     {
-        
-        /*
-         *         var customerRequest = new CustomerRequest
+        var customerRequest = new CustomerRequest
         {
-            FirstName = request.FirstName,
-            LastName = request.LastName,
-            Email = request.Email,
+            FirstName = firstName,
+            LastName = lastName,
+            Email = email,
         };
-        var r =_apiGateway.Customer.CreateAsync(customerRequest);
-         */
-        return "";
+
+        var createdCustomer = await _apiGateway.Customer.CreateAsync(customerRequest);
+        await _userService.SetBrainTreeId(email, createdCustomer.Target.Id);
+
+        return createdCustomer.Target.Id;
     }
 }

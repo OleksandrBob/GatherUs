@@ -44,7 +44,9 @@ public class UserService : IUserService
 
         if (user.ProfilePictureUrl is not null)
         {
-            var blobClient = _imagesContainerClient.GetBlobClient(user.ProfilePictureUrl.Replace("https://gatherus.blob.core.windows.net/images/",""));
+            var blobClient =
+                _imagesContainerClient.GetBlobClient(
+                    user.ProfilePictureUrl.Replace("https://gatherus.blob.core.windows.net/images/", ""));
             await blobClient.DeleteAsync();
         }
 
@@ -71,7 +73,7 @@ public class UserService : IUserService
             using var memoryStream = new MemoryStream(imageBytes);
             var blobClient = _imagesContainerClient.GetBlobClient(fileName);
             await blobClient.UploadAsync(memoryStream, overwrite: true);
-            
+
             var user = await _unitOfWork.Users.GetByAsync(u => u.Id == userId);
             user.ProfilePictureUrl = "https://gatherus.blob.core.windows.net/images/" + fileName;
             _unitOfWork.Users.Update(user);
@@ -83,5 +85,21 @@ public class UserService : IUserService
         {
             return Result.Failure<string>("Saving failed.");
         }
+    }
+
+    public async Task SetBrainTreeId(string email, string brainTreeId)
+    {
+        var user = await _unitOfWork.Users.GetByAsync(u => u.Mail == email);
+        user.BrainTreeId = brainTreeId;
+        _unitOfWork.Users.Update(user);
+        await _unitOfWork.CompleteAsync();
+    }
+
+    public async Task AddMoney(int userId, decimal amount)
+    {
+        var user = await _unitOfWork.Users.GetByAsync(u => u.Id == userId);
+        user.Balance += amount;
+        _unitOfWork.Users.Update(user);
+        await _unitOfWork.CompleteAsync();
     }
 }

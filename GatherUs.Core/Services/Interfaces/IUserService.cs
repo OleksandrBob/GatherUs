@@ -14,4 +14,8 @@ public interface IUserService
     Task<Result> DeleteProfilePicture(int userId);
 
     Task<Result<string>> UploadProfilePicture(int userId, string imageFile, string name);
+
+    Task SetBrainTreeId(string email, string brainTreeId);
+
+    Task AddMoney(int userId, decimal amount);
 }
