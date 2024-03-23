@@ -1,4 +1,6 @@
+using Azure.Storage.Blobs;
 using CSharpFunctionalExtensions;
+using GatherUs.Core.Helpers;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
 using GatherUs.DAL.Repository;
@@ -11,19 +13,33 @@ namespace GatherUs.Core.Services;
 public class EventService : IEventService
 {
     private readonly IUnitOfWork _unitOfWork;
+    
+    private readonly BlobContainerClient _imagesContainerClient;
 
+    //TODO: Remove strings from here
+    private const string ConnectionString =
+        "DefaultEndpointsProtocol=https;AccountName=gatherus;AccountKey=L7c5tB9b2UDkYeURe0jL+35lgAPSEwkTq5cwubkmM5kGl+JJeJR062fnOJ7syn3S/sJBLjblSDkq+AStq/Ubcw==;EndpointSuffix=core.windows.net";
+
+    private const string ContainerName = "images";
+    
     public EventService(IUnitOfWork unitOfWork)
     {
         _unitOfWork = unitOfWork;
+        
+        var blobServiceClient = new BlobServiceClient(ConnectionString);
+        _imagesContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
     }
 
-    public async Task<int> CreateEvent(
+    public async Task<int> 
+        CreateEvent(
         int organizerId,
         string name,
         string description,
         DateTime startTimeUtc,
         byte minRequiredAge,
         decimal ticketPrice,
+        string image,
+        string imageName,
         CustomEventType customEventType,
         CustomEventLocationType customEventLocationType,
         List<CustomEventCategory> customEventCategories)
@@ -42,6 +58,22 @@ public class EventService : IEventService
         };
 
         _unitOfWork.CustomEvents.AddNew(eventToCreate);
+        await _unitOfWork.CompleteAsync();
+
+        if (string.IsNullOrEmpty(image) || string.IsNullOrEmpty(imageName))
+        {
+            return eventToCreate.Id;
+        }
+
+        var ext = imageName.Split('.')[1];
+        var fileName = PictureHelper.GetEventPictureUrl(eventToCreate.Id) + '.' + ext;
+        var imageBytes = Convert.FromBase64String(image);
+        
+        using var memoryStream = new MemoryStream(imageBytes);
+        var blobClient = _imagesContainerClient.GetBlobClient(fileName);
+        await blobClient.UploadAsync(memoryStream, overwrite: true);
+
+        eventToCreate.PictureUrl = "https://gatherus.blob.core.windows.net/images/" + fileName;
         await _unitOfWork.CompleteAsync();
 
         return eventToCreate.Id;

@@ -12,6 +12,8 @@ public class CreateEventCommand : IRequest<Result<int, FormattedError>>
     internal int OrganizerId { get; set; }
 
     [Required] public CustomEventDto EventDto { get; set; }
+    
+    public string? SelectedImageName { get; set; }
 
     public class Handler : IRequestHandler<CreateEventCommand, Result<int, FormattedError>>
     {
@@ -25,6 +27,8 @@ public class CreateEventCommand : IRequest<Result<int, FormattedError>>
         public async Task<Result<int, FormattedError>> Handle(CreateEventCommand request,
             CancellationToken cancellationToken)
         {
+            request.EventDto.StartTimeUtc = DateTime.SpecifyKind(request.EventDto.StartTimeUtc, DateTimeKind.Utc);
+            
             try
             {
                 var createdEventId = await _eventService.CreateEvent(
@@ -34,6 +38,8 @@ public class CreateEventCommand : IRequest<Result<int, FormattedError>>
                     request.EventDto.StartTimeUtc,
                     request.EventDto.MinRequiredAge,
                     request.EventDto.TicketPrice,
+                    request.EventDto.PictureUrl,
+                    request.SelectedImageName,
                     request.EventDto.CustomEventType,
                     request.EventDto.CustomEventLocationType,
                     request.EventDto.CustomEventCategories);

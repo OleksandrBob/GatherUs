@@ -22,7 +22,7 @@ public class AccountsController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> GetRegistrationConfirmationCode(GetRegistrationConfirmationCodeCommand command)
     {
-        Result<object, FormattedError> result = await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
         if (result.IsFailure)
         {
@@ -36,7 +36,7 @@ public class AccountsController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> SignUp(SignUpCommand command)
     {
-        Result<object, FormattedError> result = await _mediator.Send(command);
+        var result = await _mediator.Send(command);
 
         if (result.IsFailure)
         {
@@ -50,7 +50,7 @@ public class AccountsController : Controller
     [AllowAnonymous]
     public async Task<IActionResult> SignIn(SignInCommand command)
     {
-        Result<string, FormattedError> result = await _mediator.Send(command);
+        var result = await _mediator.Send(command);
         
         if (result.IsFailure)
         {
