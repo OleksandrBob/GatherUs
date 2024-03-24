@@ -18,6 +18,10 @@ public class CustomEventDto
 
     public decimal TicketPrice { get; set; }
     
+    public int TotalTicketCount { get; set; }
+    
+    public int TicketsLeft { get; set; }
+    
     public CustomEventType CustomEventType { get; set; }
 
     public CustomEventLocationType CustomEventLocationType { get; set; }

@@ -13,7 +13,6 @@ namespace GatherUs.Core.Services;
 public class EventService : IEventService
 {
     private readonly IUnitOfWork _unitOfWork;
-    
     private readonly BlobContainerClient _imagesContainerClient;
 
     //TODO: Remove strings from here
@@ -38,6 +37,7 @@ public class EventService : IEventService
         DateTime startTimeUtc,
         byte minRequiredAge,
         decimal ticketPrice,
+        int ticketCount,
         string image,
         string imageName,
         CustomEventType customEventType,
@@ -50,7 +50,9 @@ public class EventService : IEventService
             OrganizerId = organizerId,
             Description = description,
             TicketPrice = ticketPrice,
+            TicketsLeft = ticketCount,
             StartTimeUtc = startTimeUtc,
+            TotalTicketCount = ticketCount,
             MinRequiredAge = minRequiredAge,
             CustomEventType = customEventType,
             CustomEventCategories = customEventCategories,

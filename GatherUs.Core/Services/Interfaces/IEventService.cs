@@ -13,6 +13,7 @@ public interface IEventService
         DateTime startTimeUtc,
         byte minRequiredAge,
         decimal ticketPrice,
+        int ticketCount,
         string image,
         string imageName,
         CustomEventType customEventType,

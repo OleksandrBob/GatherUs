@@ -38,6 +38,7 @@ public class CreateEventCommand : IRequest<Result<int, FormattedError>>
                     request.EventDto.StartTimeUtc,
                     request.EventDto.MinRequiredAge,
                     request.EventDto.TicketPrice,
+                    request.EventDto.TotalTicketCount,
                     request.EventDto.PictureUrl,
                     request.SelectedImageName,
                     request.EventDto.CustomEventType,
