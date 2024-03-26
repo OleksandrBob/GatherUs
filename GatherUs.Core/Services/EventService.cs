@@ -1,5 +1,9 @@
+using System.Net.Http.Headers;
+using System.Net.Http.Json;
+using System.Text;
 using Azure.Storage.Blobs;
 using CSharpFunctionalExtensions;
+using GatherUs.Core.ApiObjects;
 using GatherUs.Core.Helpers;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
@@ -7,6 +11,8 @@ using GatherUs.DAL.Repository;
 using GatherUs.Enums.DAL;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using RazorLight.Extensions;
 
 namespace GatherUs.Core.Services;
 
@@ -14,39 +20,76 @@ public class EventService : IEventService
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly BlobContainerClient _imagesContainerClient;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     //TODO: Remove strings from here
     private const string ConnectionString =
         "DefaultEndpointsProtocol=https;AccountName=gatherus;AccountKey=L7c5tB9b2UDkYeURe0jL+35lgAPSEwkTq5cwubkmM5kGl+JJeJR062fnOJ7syn3S/sJBLjblSDkq+AStq/Ubcw==;EndpointSuffix=core.windows.net";
 
+    private const string WhereByKey =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmFwcGVhci5pbiIsImF1ZCI6Imh0dHBzOi8vYXBpLmFwcGVhci5pbi92MSIsImV4cCI6OTAwNzE5OTI1NDc0MDk5MSwiaWF0IjoxNzExNDcxNjY1LCJvcmdhbml6YXRpb25JZCI6MjIxMTA4LCJqdGkiOiIzOGQyZTlhZS1jNjk1LTQxMTMtOGVkZi1jNWEzZDIxNDk0NzMifQ._wOeA5JR6WKPlKCUqu158QSlJ17grDVAjbqMlaqwPAc";
+
     private const string ContainerName = "images";
-    
-    public EventService(IUnitOfWork unitOfWork)
+
+    public EventService(IUnitOfWork unitOfWork, IHttpClientFactory httpClientFactory)
     {
         _unitOfWork = unitOfWork;
-        
+        _httpClientFactory = httpClientFactory;
+
         var blobServiceClient = new BlobServiceClient(ConnectionString);
         _imagesContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
     }
 
-    public async Task<int> 
+    public async Task<int>
         CreateEvent(
-        int organizerId,
-        string name,
-        string description,
-        DateTime startTimeUtc,
-        byte minRequiredAge,
-        decimal ticketPrice,
-        int ticketCount,
-        string image,
-        string imageName,
-        CustomEventType customEventType,
-        CustomEventLocationType customEventLocationType,
-        List<CustomEventCategory> customEventCategories)
+            int organizerId,
+            string name,
+            string description,
+            DateTime startTimeUtc,
+            byte minRequiredAge,
+            decimal ticketPrice,
+            int ticketCount,
+            string image,
+            string imageName,
+            CustomEventType customEventType,
+            CustomEventLocationType customEventLocationType,
+            List<CustomEventCategory> customEventCategories)
     {
+        uint? meetingId = null;
+        string roomUrl = null;
+        string hostRoomUrl = null;
+
+        if (customEventLocationType == CustomEventLocationType.Online)
+        {
+            var stringPayload = JsonConvert.SerializeObject(new
+            {
+                roomMode = "group", isLocked = false, fields = new[] { "hostRoomUrl" },
+                endDate = startTimeUtc.AddHours(2)
+            });
+            var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
+
+            var client = _httpClientFactory.CreateClient();
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WhereByKey);
+
+            var createdMeetingResponse = await client.PostAsync("https://api.whereby.dev/v1/meetings", httpContent);
+            var responseBody = await createdMeetingResponse.Content.ReadAsStringAsync();
+
+            var createdMeeting = JsonConvert.DeserializeObject<CreateMeetingResponse>(responseBody);
+
+            if (createdMeeting is not null)
+            {
+                roomUrl = createdMeeting.RoomUrl;
+                meetingId = Convert.ToUInt32(createdMeeting.MeetingId);
+                hostRoomUrl = createdMeeting.HostRoomUrl;
+            }
+        }
+
         var eventToCreate = new CustomEvent
         {
             Name = name,
+            RoomUrl = roomUrl,
+            MeetingId = meetingId,
+            HostRoomUrl = hostRoomUrl,
             OrganizerId = organizerId,
             Description = description,
             TicketPrice = ticketPrice,
@@ -70,7 +113,7 @@ public class EventService : IEventService
         var ext = imageName.Split('.')[1];
         var fileName = PictureHelper.GetEventPictureUrl(eventToCreate.Id) + '.' + ext;
         var imageBytes = Convert.FromBase64String(image);
-        
+
         using var memoryStream = new MemoryStream(imageBytes);
         var blobClient = _imagesContainerClient.GetBlobClient(fileName);
         await blobClient.UploadAsync(memoryStream, overwrite: true);

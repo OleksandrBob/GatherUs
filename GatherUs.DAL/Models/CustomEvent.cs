@@ -30,6 +30,12 @@ public class CustomEvent : EntityBase
     
     public int TicketsLeft { get; set; }
 
+    public uint? MeetingId { get; set; }
+    
+    public string RoomUrl { get; set; }
+
+    public string HostRoomUrl { get; set; }
+    
     public CustomEventType CustomEventType { get; set; }
 
     public CustomEventLocationType CustomEventLocationType { get; set; }

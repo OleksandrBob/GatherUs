@@ -32,6 +32,8 @@ builder.Services.AddSingleton<IConnectionStrings>(sp => sp.GetRequiredService<IO
 builder.Services.AddDbContext<DataContext>(o =>
     o.UseNpgsql(builder.Configuration.GetConnectionString("MainDB")));
 
+builder.Services.AddHttpClient();
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IDataContext, DataContext>();
 builder.Services.AddTransient<IUserService, UserService>();
