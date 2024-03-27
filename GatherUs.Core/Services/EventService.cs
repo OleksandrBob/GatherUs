@@ -1,5 +1,4 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Text;
 using Azure.Storage.Blobs;
 using CSharpFunctionalExtensions;
@@ -12,7 +11,6 @@ using GatherUs.Enums.DAL;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using RazorLight.Extensions;
 
 namespace GatherUs.Core.Services;
 
@@ -64,7 +62,7 @@ public class EventService : IEventService
             var stringPayload = JsonConvert.SerializeObject(new
             {
                 roomMode = "group", isLocked = false, fields = new[] { "hostRoomUrl" },
-                endDate = startTimeUtc.AddHours(2)
+                endDate = startTimeUtc.AddDays(2)
             });
             var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
 

@@ -22,7 +22,8 @@ public class EventsController : Controller
     [Authorize]
     public async Task<IActionResult> GetEventInfo([FromRoute] int id)
     {
-        var command = new GetEventInfoQuery { EventId = id };
+        var command = new GetEventInfoQuery { EventId = id, UserId = User.GetLoggedInUserId() };
+
         var result = await _mediator.Send(command);
 
         if (result.IsSuccess)

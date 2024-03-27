@@ -3,12 +3,15 @@ using CSharpFunctionalExtensions;
 using GatherUs.API.DTO.Event;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
+using GatherUs.Enums.DAL;
 using MediatR;
 
 namespace GatherUs.API.Handlers.Events;
 
 public class GetEventInfoQuery : IRequest<Result<CustomEventDto, FormattedError>>
 {
+    internal int UserId { get; set; }
+    
     public int EventId { get; set; }
 
     public class Handler : IRequestHandler<GetEventInfoQuery, Result<CustomEventDto, FormattedError>>
@@ -27,7 +30,24 @@ public class GetEventInfoQuery : IRequest<Result<CustomEventDto, FormattedError>
         {
             var eventInfo = await _eventService.GetEventById(request.EventId);
 
-            return _mapper.Map<CustomEventDto>(eventInfo);
+            var eventDto = _mapper.Map<CustomEventDto>(eventInfo);
+            eventDto.RoomUrl = null;
+
+            if (eventInfo.OrganizerId == request.UserId)
+            {
+                eventDto.RoomUrl = eventInfo.HostRoomUrl;
+            }
+            else
+            {
+                var invitedGuests = await _eventService.GetGuestsInvitedToEvent(eventInfo.Id);
+                
+                if (invitedGuests.Select(g => g.Id).Contains(request.UserId))
+                {
+                    eventDto.RoomUrl = eventInfo.RoomUrl;
+                }
+            }
+
+            return eventDto;
         }
     }
 }
