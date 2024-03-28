@@ -4,31 +4,29 @@ using GatherUs.API.DTO.Event;
 using GatherUs.API.DTO.User;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
-using GatherUs.Enums.DAL;
 using MediatR;
 
 namespace GatherUs.API.Handlers.Events;
 
-public class GetGuestInvitesQuery : IRequest<Result<List<AttendanceInviteDto>, FormattedError>>
+public class GetOrganizerInvitesQuery : IRequest<Result<List<AttendanceInviteDto>, FormattedError>>
 {
-    internal int GuestId { get; set; }
+    internal int OrganizerId { get; set; }
 
-    public InviteStatus InviteStatus { get; set; } = InviteStatus.Pending;
-
-    public class Handler : IRequestHandler<GetGuestInvitesQuery, Result<List<AttendanceInviteDto>, FormattedError>>
+    public class Handler : IRequestHandler<GetOrganizerInvitesQuery, Result<List<AttendanceInviteDto>, FormattedError>>
     {
-        private readonly IEventService _eventService;
         private readonly IMapper _mapper;
+        private readonly IEventService _eventService;
 
-        public Handler(IEventService eventService, IMapper mapper)
+        public Handler(IMapper mapper, IEventService eventService)
         {
-            _eventService = eventService;
             _mapper = mapper;
+            _eventService = eventService;
         }
-        
-        public async Task<Result<List<AttendanceInviteDto>, FormattedError>> Handle(GetGuestInvitesQuery request, CancellationToken cancellationToken)
+
+        public async Task<Result<List<AttendanceInviteDto>, FormattedError>> Handle(GetOrganizerInvitesQuery request,
+            CancellationToken ct)
         {
-            var invites = await _eventService.GetGuestInvites(request.GuestId, request.InviteStatus);
+            var invites = await _eventService.GetSentInvites(request.OrganizerId);
             var invitesDto = new List<AttendanceInviteDto>(invites.Count);
 
             foreach (var inv in invites)

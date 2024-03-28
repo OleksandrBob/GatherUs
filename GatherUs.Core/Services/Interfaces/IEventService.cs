@@ -28,6 +28,8 @@ public interface IEventService
 
     Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus);
 
+    Task<List<AttendanceInvite>> GetSentInvites(int organizerId, InviteStatus inviteStatus = InviteStatus.Pending);
+
     Task<List<Guest>> GetGuestsInvitedToEvent(int customEventId);
 
     Task<List<CustomEvent>> GetFilteredEvents(

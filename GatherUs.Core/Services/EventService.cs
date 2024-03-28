@@ -159,8 +159,19 @@ public class EventService : IEventService
 
     public async Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus)
     {
-        return await _unitOfWork.AttendanceInvites.GetAllAsync(e =>
-            e.GuestId == guestId && e.InviteStatus == inviteStatus);
+        return await _unitOfWork.AttendanceInvites.GetAllAsync(
+            predicate: e => e.GuestId == guestId && e.InviteStatus == inviteStatus,
+            include: i => i.Include(inv => inv.CustomEvent)
+                .ThenInclude(inv => inv.Organizer));
+    }
+
+    public async Task<List<AttendanceInvite>> GetSentInvites(int organizerId,
+        InviteStatus inviteStatus = InviteStatus.Pending)
+    {
+        return await _unitOfWork.AttendanceInvites.GetAllAsync(
+            predicate: e => e.CustomEvent.OrganizerId == organizerId && e.InviteStatus == inviteStatus,
+            include: i => i.Include(inv => inv.CustomEvent)
+                .Include(inv => inv.Guest));
     }
 
     public async Task<List<Guest>> GetGuestsInvitedToEvent(int customEventId)

@@ -12,6 +12,8 @@ public class MappingConfigurations : Profile
     {
         CreateMap<CustomEvent, CustomEventDto>();
         
+        CreateMap<CustomEvent, SmallEventDto>();
+        
         CreateMap<AttendanceInvite, AttendanceInviteDto>();
 
         CreateMap<Guest, GuestDto>();

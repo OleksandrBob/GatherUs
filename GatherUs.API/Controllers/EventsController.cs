@@ -168,4 +168,20 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
+    
+    [HttpGet("sent-invites")]
+    [Authorize(Roles = AppConstants.OrganizerRole)]
+    public async Task<IActionResult> GetOrganizerInvites([FromQuery] GetOrganizerInvitesQuery command)
+    {
+        command.OrganizerId = User.GetLoggedInUserId();
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
+    }
 }
