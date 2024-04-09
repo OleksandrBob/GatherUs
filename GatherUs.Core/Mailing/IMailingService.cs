@@ -1,5 +1,4 @@
 using CSharpFunctionalExtensions;
-using GatherUs.Core.Mailing.Dto;
 using GatherUs.DAL.Models;
 
 namespace GatherUs.Core.Mailing;

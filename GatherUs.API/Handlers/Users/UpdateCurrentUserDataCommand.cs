@@ -2,7 +2,6 @@ using CSharpFunctionalExtensions;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Repository;
 using MediatR;
-using Microsoft.AspNetCore.Rewrite;
 
 namespace GatherUs.API.Handlers.Users;
 

@@ -5,7 +5,6 @@ using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.Enums.DAL;
 using MediatR;
-using System;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace GatherUs.API.Handlers.Events;

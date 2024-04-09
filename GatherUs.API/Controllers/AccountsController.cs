@@ -1,6 +1,4 @@
-using CSharpFunctionalExtensions;
 using GatherUs.API.Handlers.Accounts;
-using GatherUs.Core.Errors;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

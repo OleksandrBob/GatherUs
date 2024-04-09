@@ -9,7 +9,7 @@ namespace GatherUs.API.Handlers.Users;
 
 public class GetUserDataQuery : IRequest<Result<UserDto, FormattedError>>
 {
-    public int UserId { get; set; }
+    public int UserId { get; init; }
 
     public class Handler : IRequestHandler<GetUserDataQuery, Result<UserDto, FormattedError>>
     {

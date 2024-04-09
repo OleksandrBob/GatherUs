@@ -6,7 +6,7 @@ namespace GatherUs.API.Handlers.Users;
 
 public class RemoveUserPictureCommand : IRequest<Result>
 {
-    internal int CurrentUserId { get; set; }
+    internal int CurrentUserId { get; init; }
 
     public class Handler : IRequestHandler<RemoveUserPictureCommand, Result>
     {

@@ -47,4 +47,8 @@ public interface IEventService
     Task<Result<AttendanceInvite>> SetInviteStatus(AttendanceInvite invite, InviteStatus newStatus);
 
     Task<Result> AddAttendantToEvent(int customEventId, int guestId);
+
+    Task<AttendanceInvite> GetInvite(int inviteId, int? organizerId = null);
+
+    Task DeleteInvite(int inviteId);
 }

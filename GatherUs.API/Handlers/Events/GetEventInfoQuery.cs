@@ -3,16 +3,15 @@ using CSharpFunctionalExtensions;
 using GatherUs.API.DTO.Event;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
-using GatherUs.Enums.DAL;
 using MediatR;
 
 namespace GatherUs.API.Handlers.Events;
 
 public class GetEventInfoQuery : IRequest<Result<CustomEventDto, FormattedError>>
 {
-    internal int UserId { get; set; }
+    internal int UserId { get; init; }
     
-    public int EventId { get; set; }
+    public int EventId { get; init; }
 
     public class Handler : IRequestHandler<GetEventInfoQuery, Result<CustomEventDto, FormattedError>>
     {

@@ -5,7 +5,6 @@ using GatherUs.DAL.Repository;
 using Azure.Storage.Blobs;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Helpers;
-using Microsoft.AspNetCore.Http;
 
 namespace GatherUs.Core.Services;
 

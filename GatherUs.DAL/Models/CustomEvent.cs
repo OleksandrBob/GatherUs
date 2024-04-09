@@ -32,9 +32,9 @@ public class CustomEvent : EntityBase
 
     public uint? MeetingId { get; set; }
     
-    public string RoomUrl { get; set; }
+    public string RoomUrl { get; init; }
 
-    public string HostRoomUrl { get; set; }
+    public string HostRoomUrl { get; init; }
     
     public CustomEventType CustomEventType { get; set; }
 

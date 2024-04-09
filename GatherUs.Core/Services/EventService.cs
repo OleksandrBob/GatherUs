@@ -307,4 +307,20 @@ public class EventService : IEventService
 
         return Result.Success();
     }
+
+    public async Task<AttendanceInvite> GetInvite(int inviteId, int? organizerId = null)
+    {
+        if (organizerId is null)
+        {
+            return await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i => i.Id == inviteId);
+        }
+
+        return await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i => i.Id == inviteId && i.CustomEvent.OrganizerId == organizerId);
+    }
+
+    public async Task DeleteInvite(int inviteId)
+    {
+        await _unitOfWork.AttendanceInvites.Remove(inviteId);
+        await _unitOfWork.CompleteAsync();
+    }
 }

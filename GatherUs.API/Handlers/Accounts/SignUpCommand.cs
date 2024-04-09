@@ -1,7 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Errors;
-using GatherUs.Core.Mailing;
 using GatherUs.Core.Mailing.SetUp;
 using GatherUs.Core.RabbitMq;
 using GatherUs.Core.RabbitMq.Interfaces;

@@ -4,7 +4,7 @@ namespace GatherUs.Core.RabbitMq;
 
 public class QueueMessage
 {
-    public MailType Type { get; set; }
+    public MailType Type { get; init; }
 
-    public object MessageValue { get; set; }
+    public object MessageValue { get; init; }
 }

@@ -1,5 +1,4 @@
 using System.Text;
-using GatherUs.API.DTO.Event;
 using GatherUs.API.Extensions;
 using GatherUs.API.HostedServices;
 using GatherUs.Core.Constants;

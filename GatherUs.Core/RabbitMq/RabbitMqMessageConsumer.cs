@@ -1,6 +1,5 @@
 using System.Text;
 using GatherUs.Core.Mailing;
-using GatherUs.Core.Mailing.Dto;
 using GatherUs.Core.Mailing.SetUp;
 using GatherUs.Core.RabbitMq.Interfaces;
 using GatherUs.DAL.Models;

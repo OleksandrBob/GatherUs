@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using CSharpFunctionalExtensions;
 using GatherUs.DAL.Models;
-using Microsoft.AspNetCore.Http;
 
 namespace GatherUs.Core.Services.Interfaces;
 

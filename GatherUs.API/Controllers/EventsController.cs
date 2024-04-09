@@ -132,6 +132,26 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
+    
+    [HttpDelete("invites/{id}")]
+    [Authorize(Roles = AppConstants.OrganizerRole)]
+    public async Task<IActionResult> DeleteInvite([FromRoute] int id)
+    {
+        var command = new DeleteInviteCommand
+        {
+            OrganizerId = User.GetLoggedInUserId(),
+            InviteId = id,
+        };
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok();
+        }
+
+        return BadRequest(result.Error);
+    }
 
     [HttpGet("{id}/invites")]
     [Authorize(Roles = AppConstants.OrganizerRole)]
