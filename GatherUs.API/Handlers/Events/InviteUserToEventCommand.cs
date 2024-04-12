@@ -15,7 +15,7 @@ public class InviteUserToEventCommand : IRequest<Result>
 
     public int CustomEventId { get; set; }
 
-    public int GuestId { get; set; }
+    public string GuestEmail { get; set; }
 
     public string Message { get; set; }
 
@@ -49,11 +49,11 @@ public class InviteUserToEventCommand : IRequest<Result>
                 return Result.Failure("You can`t invite to the event if you are not an organizer.");
             }
 
-            var guest = await _userService.GetByIdAsync(request.GuestId);
+            var guest = await _userService.GetByEmailAsync(request.GuestEmail);
 
             if (guest is null)
             {
-                return Result.Failure("Guest with specified id doesn't exist.");
+                return Result.Failure("Guest with specified email doesn't exist.");
             }
 
             if (guest.UserType != UserType.Guest)
@@ -80,14 +80,14 @@ public class InviteUserToEventCommand : IRequest<Result>
             
             var guests = await _eventService.GetGuestsInvitedToEvent(request.CustomEventId);
 
-            if (guests.Any(g => g.Id == request.GuestId))
+            if (guests.Any(g => g.Mail == request.GuestEmail))
             {
                 return Result.Failure("Guest is already invited.");
             }
 
             try
             {
-                var invite = await _eventService.InviteUser(request.GuestId, request.CustomEventId, request.Message);
+                var invite = await _eventService.InviteUser(guest.Id, request.CustomEventId, request.Message);
 
                 invite.Guest = guest as Guest;
                 invite.CustomEvent = customEvent;

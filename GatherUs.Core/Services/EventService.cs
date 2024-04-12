@@ -315,7 +315,8 @@ public class EventService : IEventService
             return await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i => i.Id == inviteId);
         }
 
-        return await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i => i.Id == inviteId && i.CustomEvent.OrganizerId == organizerId);
+        return await _unitOfWork.AttendanceInvites.GetFirstOrDefaultAsync(i =>
+            i.Id == inviteId && i.CustomEvent.OrganizerId == organizerId);
     }
 
     public async Task DeleteInvite(int inviteId)

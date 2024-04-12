@@ -35,7 +35,7 @@ public class GetGuestInvitesQuery : IRequest<Result<List<AttendanceInviteDto>, F
             {
                 var invDto =  _mapper.Map<AttendanceInviteDto>(inv);
                 invDto.SmallEventDto = _mapper.Map<SmallEventDto>(inv.CustomEvent);
-                invDto.UserDto = _mapper.Map<UserDto>(inv.Guest);
+                invDto.UserDto = _mapper.Map<UserDto>(inv.CustomEvent.Organizer);
                 invitesDto.Add(invDto);
             }
 
