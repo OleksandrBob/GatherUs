@@ -122,6 +122,15 @@ public class EventService : IEventService
         return eventToCreate.Id;
     }
 
+    public async Task<List<CustomEvent>> GetEventsForInvites(int organizerId)
+    {
+        return await _unitOfWork.CustomEvents.GetAllAsync(e =>
+            e.StartTimeUtc > DateTime.UtcNow &&
+            e.OrganizerId == organizerId &&
+            e.CustomEventType != CustomEventType.Event &&
+            e.TicketsLeft > 0);
+    }
+
     public async Task<List<CustomEvent>> GetEventsByUserId(int userId, bool showPastEvents = false)
     {
         if (showPastEvents)

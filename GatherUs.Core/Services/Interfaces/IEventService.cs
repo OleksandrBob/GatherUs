@@ -51,4 +51,6 @@ public interface IEventService
     Task<AttendanceInvite> GetInvite(int inviteId, int? organizerId = null);
 
     Task DeleteInvite(int inviteId);
+
+    Task<List<CustomEvent>> GetEventsForInvites(int organizerId);
 }

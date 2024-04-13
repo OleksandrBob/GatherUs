@@ -63,6 +63,22 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
+    
+    /*[HttpGet("canAttend")]
+    [Authorize]
+    public async Task<IActionResult> CanUserAttendEvent(GetCurrentUserEventsQuery command)
+    {
+        command.OrganizerId = User.GetLoggedInUserId();
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
+    }*/
 
     [HttpPost("{id}/attend")]
     [Authorize(Roles = AppConstants.OrganizerRole)]
@@ -178,6 +194,25 @@ public class EventsController : Controller
     public async Task<IActionResult> GetGuestInvites([FromQuery] GetGuestInvitesQuery command)
     {
         command.GuestId = User.GetLoggedInUserId();
+
+        var result = await _mediator.Send(command);
+
+        if (result.IsSuccess)
+        {
+            return Ok(result.Value);
+        }
+
+        return BadRequest(result.Error);
+    }
+    
+    [HttpGet("possibleInvites")]
+    [Authorize(Roles = AppConstants.OrganizerRole)]
+    public async Task<IActionResult> GetPossibleEventsForInvites()
+    {
+        var command = new GetEventsPossibleForInvitesQuery()
+        {
+            OrganizerId = User.GetLoggedInUserId(),
+        };
 
         var result = await _mediator.Send(command);
 

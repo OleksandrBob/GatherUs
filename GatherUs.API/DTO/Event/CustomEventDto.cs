@@ -22,7 +22,7 @@ public class CustomEventDto
     
     public int TicketsLeft { get; set; }
 
-    public string RoomUrl { get; set; }
+    public string? RoomUrl { get; set; }
     
     public CustomEventType CustomEventType { get; set; }
 
