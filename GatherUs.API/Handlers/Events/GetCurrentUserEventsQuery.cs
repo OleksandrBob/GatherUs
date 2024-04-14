@@ -10,7 +10,7 @@ namespace GatherUs.API.Handlers.Events;
 
 public class GetCurrentUserEventsQuery : IRequest<Result<List<CustomEventDto>, FormattedError>>
 {
-    internal int OrganizerId { get; set; }
+    internal int UserId { get; set; }
 
     [DefaultValue(false)]
     public bool ShowPastEvents { get; set; } = false;
@@ -30,7 +30,7 @@ public class GetCurrentUserEventsQuery : IRequest<Result<List<CustomEventDto>, F
             GetCurrentUserEventsQuery request,
             CancellationToken cancellationToken)
         {
-            var events = await _eventService.GetEventsByUserId(request.OrganizerId, request.ShowPastEvents);
+            var events = await _eventService.GetEventsByUserId(request.UserId, request.ShowPastEvents);
 
             return _mapper.Map<List<CustomEventDto>>(events);
         }

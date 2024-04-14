@@ -8,9 +8,7 @@ public class DataContext : DbContext, IDataContext
 {
     private readonly IConnectionStrings _connectionStrings;
 
-    public DataContext()
-    {
-    }
+    public DataContext() { }
 
     public DataContext(IConnectionStrings connectionStrings)
     {
@@ -26,6 +24,8 @@ public class DataContext : DbContext, IDataContext
     public DbSet<AttendanceInvite> AttendanceInvites { get; set; }
     
     public DbSet<EmailForRegistration> EmailForRegistrations { get; set; }
+    
+    public DbSet<GatherUsPaymentTransaction> GatherUsPaymentTransactions { get; set; }
     
     public async Task<int> DefaultEFSaveChangesAsync(CancellationToken cancellationToken = default)
     {
@@ -56,8 +56,8 @@ public class DataContext : DbContext, IDataContext
 
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Guest>().ToTable("Users");
-        modelBuilder.Entity<Organizer>().ToTable("Users");
         modelBuilder.Entity<Admin>().ToTable("Users");
+        modelBuilder.Entity<Organizer>().ToTable("Users");
 
         // Soft delete global query filter
         modelBuilder.Entity<User>().HasQueryFilter(user => user.DeletionTime == null);
@@ -108,5 +108,17 @@ public class DataContext : DbContext, IDataContext
             .WithMany(e => e.Invites)
             .HasForeignKey(e => e.GuestId)
             .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<GatherUsPaymentTransaction>()
+            .HasOne(e => e.Organizer)
+            .WithOne();
+
+        modelBuilder.Entity<GatherUsPaymentTransaction>()
+            .HasOne(e => e.Guest)
+            .WithOne();
+        
+        modelBuilder.Entity<GatherUsPaymentTransaction>()
+            .HasOne(e => e.CustomEvent)
+            .WithOne();
     }
 }

@@ -3,6 +3,7 @@ using System;
 using GatherUs.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GatherUs.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240414125307_AddedPaymentTransactionsTable")]
+    partial class AddedPaymentTransactionsTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -162,8 +165,8 @@ namespace GatherUs.DAL.Migrations
                     b.Property<int>("CustomEventId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("Fee")
-                        .HasColumnType("numeric");
+                    b.Property<double>("Fee")
+                        .HasColumnType("double precision");
 
                     b.Property<int>("GuestId")
                         .HasColumnType("integer");
@@ -171,8 +174,8 @@ namespace GatherUs.DAL.Migrations
                     b.Property<int>("OrganizerId")
                         .HasColumnType("integer");
 
-                    b.Property<decimal>("TransactionAmount")
-                        .HasColumnType("numeric");
+                    b.Property<double>("TransactionAmount")
+                        .HasColumnType("double precision");
 
                     b.HasKey("Id");
 

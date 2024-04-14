@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using System.Net.Http.Headers;
 using System.Text;
 using Azure.Storage.Blobs;
@@ -145,9 +146,15 @@ public class EventService : IEventService
                                                                 e.Attendants.Any(a => a.Id == userId)));
     }
 
-    public async Task<CustomEvent> GetEventById(int eventId)
+    public async Task<CustomEvent> GetEventById(int eventId, Expression<Func<CustomEvent, object>> incl = null)
     {
-        return await _unitOfWork.CustomEvents.GetFirstOrDefaultAsync(e => e.Id == eventId);
+        if (incl is null)
+        {
+            return await _unitOfWork.CustomEvents.GetFirstOrDefaultAsync(e => e.Id == eventId);
+        }
+
+        return await _unitOfWork.CustomEvents.GetFirstOrDefaultAsync(e => e.Id == eventId,
+            include: i => i.Include(incl));
     }
 
     public async Task<AttendanceInvite> InviteUser(int guestId, int customEventId, string inviteMessage)
@@ -286,6 +293,11 @@ public class EventService : IEventService
         {
             return Result.Failure("Event doesnt exist");
         }
+        
+        if (customEvent.TicketsLeft < 1)
+        {
+            return Result.Failure("No tickets left");
+        }
 
         var guest = await _unitOfWork.Guests.GetFirstOrDefaultAsync(g => g.Id == guestId, disableTracking: false);
 
@@ -308,9 +320,17 @@ public class EventService : IEventService
         guest.Balance -= customEvent.TicketPrice;
         organizer.Balance += customEvent.TicketPrice - fee;
 
-        //TODO: set fee to GatherUs
+        _unitOfWork.GatherUsPaymentTransactions.AddNew(new GatherUsPaymentTransaction
+        {
+            Fee = fee,
+            GuestId = guest.Id,
+            OrganizerId = organizer.Id,
+            CustomEventId = customEvent.OrganizerId,
+            TransactionAmount = customEvent.TicketPrice,
+        });
 
         customEvent.Attendants.Add(guest);
+        customEvent.TicketsLeft--;
 
         await _unitOfWork.CompleteAsync();
 

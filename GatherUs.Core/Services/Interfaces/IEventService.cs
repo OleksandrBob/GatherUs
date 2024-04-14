@@ -1,3 +1,4 @@
+using System.Linq.Expressions;
 using CSharpFunctionalExtensions;
 using GatherUs.DAL.Models;
 using GatherUs.Enums.DAL;
@@ -22,8 +23,7 @@ public interface IEventService
 
     Task<List<CustomEvent>> GetEventsByUserId(int userId, bool showPastEvents = false);
 
-    Task<CustomEvent> GetEventById(int eventId);
-
+    Task<CustomEvent> GetEventById(int eventId, Expression<Func<CustomEvent, object>> incl = null);
     Task<AttendanceInvite> InviteUser(int guestId, int customEventId, string inviteMessage);
 
     Task<List<AttendanceInvite>> GetGuestInvites(int guestId, InviteStatus inviteStatus);

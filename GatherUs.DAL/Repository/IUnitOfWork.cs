@@ -17,6 +17,8 @@ public interface IUnitOfWork
 
     public IDataRepository<EmailForRegistration> EmailForRegistrations { get; }
 
+    public IDataRepository<GatherUsPaymentTransaction> GatherUsPaymentTransactions { get; }
+
     Task PerformTransactionAsync(List<Func<Task<Result>>> funcs);
 
     public void Complete(bool withTimeUpdate = true);

@@ -17,18 +17,24 @@ public class UnitOfWork : IDisposable, IUnitOfWork
     private IDataRepository<CustomEvent> _customEvents;
     private IDataRepository<AttendanceInvite> _attendanceInvites;
     private IDataRepository<EmailForRegistration> _emailForRegistrations;
+    private IDataRepository<GatherUsPaymentTransaction> _gatherUsPaymentTransactios;
 
     public IDataRepository<User> Users => _users ??= new DataRepository<User>(_context);
-    
+
     public IDataRepository<Guest> Guests => _guests ??= new DataRepository<Guest>(_context);
-    
+
     public IDataRepository<Organizer> Organizers => _organizers ??= new DataRepository<Organizer>(_context);
-    
+
     public IDataRepository<CustomEvent> CustomEvents => _customEvents ??= new DataRepository<CustomEvent>(_context);
-    
-    public IDataRepository<AttendanceInvite> AttendanceInvites => _attendanceInvites ??= new DataRepository<AttendanceInvite>(_context);
-    
-    public IDataRepository<EmailForRegistration> EmailForRegistrations => _emailForRegistrations ??= new DataRepository<EmailForRegistration>(_context);
+
+    public IDataRepository<AttendanceInvite> AttendanceInvites =>
+        _attendanceInvites ??= new DataRepository<AttendanceInvite>(_context);
+
+    public IDataRepository<EmailForRegistration> EmailForRegistrations =>
+        _emailForRegistrations ??= new DataRepository<EmailForRegistration>(_context);
+
+    public IDataRepository<GatherUsPaymentTransaction> GatherUsPaymentTransactions => _gatherUsPaymentTransactios ??=
+        new DataRepository<GatherUsPaymentTransaction>(_context);
 
     public UnitOfWork(IDataContext context)
     {

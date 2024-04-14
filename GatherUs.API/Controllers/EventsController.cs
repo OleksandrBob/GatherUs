@@ -52,7 +52,7 @@ public class EventsController : Controller
     [Authorize]
     public async Task<IActionResult> GetCurrentUserEvents([FromQuery] GetCurrentUserEventsQuery command)
     {
-        command.OrganizerId = User.GetLoggedInUserId();
+        command.UserId = User.GetLoggedInUserId();
 
         var result = await _mediator.Send(command);
 
@@ -63,25 +63,9 @@ public class EventsController : Controller
 
         return BadRequest(result.Error);
     }
-    
-    /*[HttpGet("canAttend")]
-    [Authorize]
-    public async Task<IActionResult> CanUserAttendEvent(GetCurrentUserEventsQuery command)
-    {
-        command.OrganizerId = User.GetLoggedInUserId();
 
-        var result = await _mediator.Send(command);
-
-        if (result.IsSuccess)
-        {
-            return Ok(result.Value);
-        }
-
-        return BadRequest(result.Error);
-    }*/
-
-    [HttpPost("{id}/attend")]
-    [Authorize(Roles = AppConstants.OrganizerRole)]
+    [HttpPost("attend/{id}")]
+    [Authorize(Roles = AppConstants.GuestRole)]
     public async Task<IActionResult> AttendEvent([FromRoute] int id)
     {
         AttendEventCommand command =
