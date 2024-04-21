@@ -61,7 +61,7 @@ public class InviteUserToEventCommand : IRequest<Result>
                 return Result.Failure("You can`t invite non Guest to the event.");
             }
 
-            var customEvent = await _eventService.GetEventById(request.CustomEventId);
+            var customEvent = await _eventService.GetEventById(request.CustomEventId, e => e.CustomEventGuests);
 
             if (customEvent is null)
             {
@@ -77,7 +77,12 @@ public class InviteUserToEventCommand : IRequest<Result>
             {
                 return Result.Failure("You can only invite to a 'Conference' or a 'Meeting'.");
             }
-            
+
+            if (customEvent.CustomEventGuests.Any(g => g.GuestId == guest.Id))
+            {
+                return Result.Failure("Guest is already attending.");
+            }
+
             var guests = await _eventService.GetGuestsInvitedToEvent(request.CustomEventId);
 
             if (guests.Any(g => g.Mail == request.GuestEmail))

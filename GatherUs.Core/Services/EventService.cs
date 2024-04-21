@@ -212,6 +212,8 @@ public class EventService : IEventService
     {
         var predicate = PredicateBuilder.New<CustomEvent>(c => c.CustomEventType != CustomEventType.Meeting);
 
+        predicate = predicate.And(e => e.TicketsLeft > 0);
+
         if (searchString is not null)
         {
             predicate = predicate.And(e =>

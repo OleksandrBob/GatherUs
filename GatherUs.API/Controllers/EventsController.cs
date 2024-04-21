@@ -79,7 +79,7 @@ public class EventsController : Controller
 
         if (result.IsSuccess)
         {
-            return Ok(result);
+            return Ok();
         }
 
         return BadRequest(result.Error);
