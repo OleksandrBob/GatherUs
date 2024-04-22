@@ -1,9 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Errors;
-using GatherUs.Core.Mailing.SetUp;
-using GatherUs.Core.RabbitMq;
-using GatherUs.Core.RabbitMq.Interfaces;
+using GatherUs.Core.Mailing;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
 using GatherUs.Enums.DAL;
@@ -39,7 +37,7 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
         private readonly IUserService _userService;
         private readonly IGuestService _guestService;
         private readonly IPaymentService _paymentService;
-        private readonly IMessagePublisher _messagePublisher;
+        private readonly IMailingService _mailingService;
         private readonly IOrganizerService _organizerService;
         private readonly IEmailForRegistrationService _emailForRegistrationService;
 
@@ -47,14 +45,14 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
             IUserService userService,
             IGuestService guestService,
             IPaymentService paymentService,
-            IMessagePublisher messagePublisher,
+            IMailingService mailingService,
             IOrganizerService organizerService,
             IEmailForRegistrationService emailForRegistrationService)
         {
             _userService = userService;
             _guestService = guestService;
             _paymentService = paymentService;
-            _messagePublisher = messagePublisher;
+            _mailingService = mailingService;
             _organizerService = organizerService;
             _emailForRegistrationService = emailForRegistrationService;
         }
@@ -128,11 +126,8 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
             try
             {
                 await _guestService.InsertAsync(guestToInsert);
-                _messagePublisher.PublishMessage(new QueueMessage
-                {
-                    Type = MailType.GuestVerification,
-                    MessageValue = guestToInsert,
-                });
+                
+                Task.Run(() => _mailingService.SendGuestVerificationMailAsync(guestToInsert));
             }
             catch (Exception ex)
             {
@@ -156,11 +151,8 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
             try
             {
                 await _organizerService.InsertAsync(organizerToInsert);
-                _messagePublisher.PublishMessage(new QueueMessage
-                {
-                    Type = MailType.OrganizerVerification,
-                    MessageValue = organizerToInsert,
-                });
+
+                Task.Run(() => _mailingService.SendOrganizerVerificationMailAsync(organizerToInsert));
             }
             catch (Exception ex)
             {

@@ -9,14 +9,9 @@ namespace GatherUs.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class EventsController : Controller
+public class EventsController : BaseController
 {
-    private readonly IMediator _mediator;
-
-    public EventsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public EventsController(IMediator mediator) : base(mediator) { }
 
     [HttpGet("{id}")]
     [Authorize]

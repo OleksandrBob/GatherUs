@@ -2,9 +2,6 @@ using System.ComponentModel.DataAnnotations;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Mailing;
-using GatherUs.Core.Mailing.SetUp;
-using GatherUs.Core.RabbitMq;
-using GatherUs.Core.RabbitMq.Interfaces;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.Enums.DAL;
 using MediatR;
@@ -23,18 +20,15 @@ public class GetRegistrationConfirmationCodeCommand : IRequest<Result<object, Fo
     {
         private readonly IUserService _userService;
         private readonly IMailingService _mailService;
-        private readonly IMessagePublisher _messagePublisher;
         private readonly IEmailForRegistrationService _emailForRegistrationService;
 
         public Handler(
             IUserService userService,
             IMailingService mailService,
-            IMessagePublisher messagePublisher,
             IEmailForRegistrationService emailForRegistrationService)
         {
             _userService = userService;
             _mailService = mailService;
-            _messagePublisher = messagePublisher;
             _emailForRegistrationService = emailForRegistrationService;
         }
 
@@ -67,14 +61,8 @@ public class GetRegistrationConfirmationCodeCommand : IRequest<Result<object, Fo
 
                 emailForRegistration = mailAddingResult.Value;
             }
-
-            _messagePublisher.PublishMessage(new QueueMessage
-            {
-                Type = MailType.ConfirmationCode,
-                MessageValue = emailForRegistration,
-            });
             
-            //await _mailService.SendMailVerificationCodeAsync(emailForRegistration);
+            Task.Run(() => _mailService.SendMailVerificationCodeAsync(emailForRegistration));
 
             return Result.Success();
         }

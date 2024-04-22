@@ -1,7 +1,5 @@
 using CSharpFunctionalExtensions;
-using GatherUs.Core.Mailing.SetUp;
-using GatherUs.Core.RabbitMq;
-using GatherUs.Core.RabbitMq.Interfaces;
+using GatherUs.Core.Mailing;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
 using GatherUs.Enums.DAL;
@@ -23,16 +21,16 @@ public class InviteUserToEventCommand : IRequest<Result>
     {
         private readonly IUserService _userService;
         private readonly IEventService _eventService;
-        private readonly IMessagePublisher _messagePublisher;
+        private readonly IMailingService _mailingService;
 
         public Handler(
             IUserService userService,
             IEventService eventService,
-            IMessagePublisher messagePublisher)
+            IMailingService mailingService)
         {
             _userService = userService;
             _eventService = eventService;
-            _messagePublisher = messagePublisher;
+            _mailingService = mailingService;
         }
 
         public async Task<Result> Handle(InviteUserToEventCommand request, CancellationToken cancellationToken)
@@ -97,11 +95,7 @@ public class InviteUserToEventCommand : IRequest<Result>
                 invite.Guest = guest as Guest;
                 invite.CustomEvent = customEvent;
 
-                _messagePublisher.PublishMessage(new QueueMessage
-                {
-                    Type = MailType.AttendanceInvite,
-                    MessageValue = invite,
-                });
+                Task.Run(() => _mailingService.SendInviteMailAsync(invite));
             }
             catch (Exception e)
             {

@@ -7,14 +7,10 @@ namespace GatherUs.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class AccountsController : Controller
+public class AccountsController : BaseController
 {
-    private readonly IMediator _mediator;
-    
-    public AccountsController(IMediator mediator)
-    {
-        _mediator = mediator;
-    }
+    public AccountsController(IMediator mediator) : base(mediator) { }
+
 
     [HttpPost("get-confirmation-code")]
     [AllowAnonymous]

@@ -1,11 +1,8 @@
 using System.Text;
 using GatherUs.API.Extensions;
-using GatherUs.API.HostedServices;
 using GatherUs.Core.Constants;
 using GatherUs.Core.Mailing;
 using GatherUs.Core.Mailing.SetUp;
-using GatherUs.Core.RabbitMq;
-using GatherUs.Core.RabbitMq.Interfaces;
 using GatherUs.Core.Services;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Context;
@@ -39,14 +36,10 @@ builder.Services.AddTransient<IUserService, UserService>();
 builder.Services.AddTransient<IEventService, EventService>();
 builder.Services.AddTransient<IGuestService, GuestService>();
 builder.Services.AddSingleton<ITokenManager, TokenManager>();
-builder.Services.AddSingleton<IMessageConsumer, RabbitMqMessageConsumer>();
-builder.Services.AddSingleton<IMessagePublisher, RabbitMqMessagePublisher>();
 builder.Services.AddSingleton<IMailingService, MailingService>();
 builder.Services.AddTransient<IOrganizerService, OrganizerService>();
 builder.Services.AddTransient<IPaymentService, PaymentService>();
 builder.Services.AddScoped<IEmailForRegistrationService, EmailForRegistrationService>();
-
-builder.Services.AddHostedService<QueueMessageConsumerBackgroundServise>();
 
 builder.Services.AddAutoMapper(typeof(MappingConfigurations));
 

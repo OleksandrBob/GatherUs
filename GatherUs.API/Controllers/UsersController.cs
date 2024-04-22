@@ -1,7 +1,5 @@
 using GatherUs.API.Extensions;
 using GatherUs.API.Handlers.Users;
-using GatherUs.Core.Constants;
-using GatherUs.Core.Services.Interfaces;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -10,23 +8,9 @@ namespace GatherUs.API.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
-public class UsersController : Controller
+public class UsersController : BaseController
 {
-    private readonly IMediator _mediator;
-    private readonly IPaymentService _paymentService;
-
-    public UsersController(IMediator mediator, IPaymentService paymentService)
-    {
-        _mediator = mediator;
-        _paymentService = paymentService;
-    }
-
-    [HttpGet]
-    [Authorize(Roles = AppConstants.OrganizerRole)]
-    public IActionResult ListProducts()
-    {
-        return Ok(1);
-    }
+    public UsersController(IMediator mediator) : base(mediator) { }
 
     [HttpGet("current")]
     [Authorize]
