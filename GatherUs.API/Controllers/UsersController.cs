@@ -110,4 +110,23 @@ public class UsersController : BaseController
 
         return Ok(result.Value);
     }
+    
+    [HttpGet("current/balance")]
+    [Authorize]
+    public async Task<IActionResult> GetCurrentBalance()
+    {
+        var command = new GetCurrentBalanceQuery
+        {
+            UserId = User.GetLoggedInUserId(),
+        };
+        
+        var result = await _mediator.Send(command);
+
+        if (result.IsFailure)
+        {
+            return BadRequest(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
 }
