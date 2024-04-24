@@ -50,16 +50,31 @@ public class EventService : IEventService
             int ticketCount,
             string image,
             string imageName,
+            string location,
+            double? locationLatitude,
+            double? locationLongitude,
             CustomEventType customEventType,
             CustomEventLocationType customEventLocationType,
             List<CustomEventCategory> customEventCategories)
     {
-        uint? meetingId = null;
-        string roomUrl = null;
-        string hostRoomUrl = null;
+        var eventToCreate = new CustomEvent
+        {
+            Name = name,
+            OrganizerId = organizerId,
+            Description = description,
+            TicketPrice = ticketPrice,
+            TicketsLeft = ticketCount,
+            StartTimeUtc = startTimeUtc,
+            TotalTicketCount = ticketCount,
+            MinRequiredAge = minRequiredAge,
+            CustomEventType = customEventType,
+            CustomEventCategories = customEventCategories,
+            CustomEventLocationType = customEventLocationType,
+        };
 
         if (customEventLocationType == CustomEventLocationType.Online)
         {
+            //TODO: move strings to const
             var stringPayload = JsonConvert.SerializeObject(new
             {
                 roomMode = "group", isLocked = false, fields = new[] { "hostRoomUrl" },
@@ -77,29 +92,17 @@ public class EventService : IEventService
 
             if (createdMeeting is not null)
             {
-                roomUrl = createdMeeting.RoomUrl;
-                meetingId = Convert.ToUInt32(createdMeeting.MeetingId);
-                hostRoomUrl = createdMeeting.HostRoomUrl;
+                eventToCreate.RoomUrl = createdMeeting.RoomUrl;
+                eventToCreate.MeetingId = Convert.ToUInt32(createdMeeting.MeetingId);
+                eventToCreate.HostRoomUrl = createdMeeting.HostRoomUrl;
             }
         }
-
-        var eventToCreate = new CustomEvent
+        else
         {
-            Name = name,
-            RoomUrl = roomUrl,
-            MeetingId = meetingId,
-            HostRoomUrl = hostRoomUrl,
-            OrganizerId = organizerId,
-            Description = description,
-            TicketPrice = ticketPrice,
-            TicketsLeft = ticketCount,
-            StartTimeUtc = startTimeUtc,
-            TotalTicketCount = ticketCount,
-            MinRequiredAge = minRequiredAge,
-            CustomEventType = customEventType,
-            CustomEventCategories = customEventCategories,
-            CustomEventLocationType = customEventLocationType,
-        };
+            eventToCreate.Location = location;
+            eventToCreate.LocationLatitude = locationLatitude;
+            eventToCreate.LocationLongitude = locationLongitude;
+        }
 
         _unitOfWork.CustomEvents.AddNew(eventToCreate);
         await _unitOfWork.CompleteAsync();
@@ -217,7 +220,7 @@ public class EventService : IEventService
         if (searchString is not null)
         {
             predicate = predicate.And(e =>
-                e.Name.ToLower().Contains(searchString) || e.Description.ToLower().Contains(searchString));
+                e.Name.ToLower().Contains(searchString) || e.Description.ToLower().Contains(searchString) || e.Location.ToLower().Contains(searchString));
         }
 
         if (fromDate.HasValue)

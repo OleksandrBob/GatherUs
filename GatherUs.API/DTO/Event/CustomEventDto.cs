@@ -24,6 +24,12 @@ public class CustomEventDto
 
     public string? RoomUrl { get; set; }
     
+    public string? Location { get; set; }
+
+    public double? LocationLatitude { get; set; }
+    
+    public double? LocationLongitude { get; set; }
+    
     public CustomEventType CustomEventType { get; set; }
 
     public CustomEventLocationType CustomEventLocationType { get; set; }

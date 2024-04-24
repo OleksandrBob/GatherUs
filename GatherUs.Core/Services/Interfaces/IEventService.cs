@@ -17,6 +17,9 @@ public interface IEventService
         int ticketCount,
         string image,
         string imageName,
+        string location,
+        double? locationLatitude,
+        double? locationLongitude,
         CustomEventType customEventType,
         CustomEventLocationType customEventLocationType,
         List<CustomEventCategory> customEventCategories);

@@ -41,6 +41,9 @@ public class CreateEventCommand : IRequest<Result<int, FormattedError>>
                     request.EventDto.TotalTicketCount,
                     request.EventDto.PictureUrl,
                     request.SelectedImageName,
+                    request.EventDto.Location,
+                    request.EventDto.LocationLatitude,
+                    request.EventDto.LocationLongitude,
                     request.EventDto.CustomEventType,
                     request.EventDto.CustomEventLocationType,
                     request.EventDto.CustomEventCategories);
