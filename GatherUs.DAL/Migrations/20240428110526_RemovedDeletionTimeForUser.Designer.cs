@@ -3,6 +3,7 @@ using System;
 using GatherUs.DAL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GatherUs.DAL.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20240428110526_RemovedDeletionTimeForUser")]
+    partial class RemovedDeletionTimeForUser
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -217,6 +220,9 @@ namespace GatherUs.DAL.Migrations
                     b.Property<string>("LastName")
                         .HasColumnType("text");
 
+                    b.Property<int>("LoginProvider")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Mail")
                         .HasColumnType("text");
 
@@ -238,6 +244,15 @@ namespace GatherUs.DAL.Migrations
                     b.HasDiscriminator<int>("UserType");
 
                     b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("GatherUs.DAL.Models.Admin", b =>
+                {
+                    b.HasBaseType("GatherUs.DAL.Models.User");
+
+                    b.ToTable("Users", (string)null);
+
+                    b.HasDiscriminator().HasValue(3);
                 });
 
             modelBuilder.Entity("GatherUs.DAL.Models.Guest", b =>

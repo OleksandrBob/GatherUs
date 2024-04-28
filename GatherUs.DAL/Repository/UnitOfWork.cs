@@ -17,7 +17,7 @@ public class UnitOfWork : IDisposable, IUnitOfWork
     private IDataRepository<CustomEvent> _customEvents;
     private IDataRepository<AttendanceInvite> _attendanceInvites;
     private IDataRepository<EmailForRegistration> _emailForRegistrations;
-    private IDataRepository<GatherUsPaymentTransaction> _gatherUsPaymentTransactios;
+    private IDataRepository<GatherUsPaymentTransaction> _gatherUsPaymentTransactions;
 
     public IDataRepository<User> Users => _users ??= new DataRepository<User>(_context);
 
@@ -33,7 +33,7 @@ public class UnitOfWork : IDisposable, IUnitOfWork
     public IDataRepository<EmailForRegistration> EmailForRegistrations =>
         _emailForRegistrations ??= new DataRepository<EmailForRegistration>(_context);
 
-    public IDataRepository<GatherUsPaymentTransaction> GatherUsPaymentTransactions => _gatherUsPaymentTransactios ??=
+    public IDataRepository<GatherUsPaymentTransaction> GatherUsPaymentTransactions => _gatherUsPaymentTransactions ??=
         new DataRepository<GatherUsPaymentTransaction>(_context);
 
     public UnitOfWork(IDataContext context)

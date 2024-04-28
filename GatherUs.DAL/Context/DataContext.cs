@@ -56,17 +56,12 @@ public class DataContext : DbContext, IDataContext
 
         modelBuilder.Entity<User>().ToTable("Users");
         modelBuilder.Entity<Guest>().ToTable("Users");
-        modelBuilder.Entity<Admin>().ToTable("Users");
         modelBuilder.Entity<Organizer>().ToTable("Users");
-
-        // Soft delete global query filter
-        modelBuilder.Entity<User>().HasQueryFilter(user => user.DeletionTime == null);
 
         modelBuilder.Entity<User>()
             .HasDiscriminator(x => x.UserType)
             .HasValue<Organizer>(UserType.Organizer)
-            .HasValue<Guest>(UserType.Guest)
-            .HasValue<Admin>(UserType.Admin);
+            .HasValue<Guest>(UserType.Guest);
         modelBuilder.Entity<User>().Property(u => u.UserType).HasDefaultValue(UserType.Guest);
 
         modelBuilder.Entity<EmailForRegistration>()

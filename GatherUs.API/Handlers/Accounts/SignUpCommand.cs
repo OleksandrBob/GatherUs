@@ -120,7 +120,6 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 LastName = request.LastName,
                 Password = request.Password,
                 FirstName = request.FirstName,
-                LoginProvider = LoginProvider.GatherUs,
             };
 
             try
@@ -145,7 +144,6 @@ public class SignUpCommand : IRequest<Result<object, FormattedError>>
                 LastName = request.LastName,
                 Password = request.Password,
                 FirstName = request.FirstName,
-                LoginProvider = LoginProvider.GatherUs,
             };
 
             try
