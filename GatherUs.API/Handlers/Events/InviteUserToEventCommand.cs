@@ -2,7 +2,7 @@ using CSharpFunctionalExtensions;
 using GatherUs.Core.Mailing;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 using MediatR;
 
 namespace GatherUs.API.Handlers.Events;

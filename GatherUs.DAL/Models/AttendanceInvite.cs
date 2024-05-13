@@ -1,4 +1,4 @@
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 
 namespace GatherUs.DAL.Models;
 

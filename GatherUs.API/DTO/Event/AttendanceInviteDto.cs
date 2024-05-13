@@ -1,5 +1,5 @@
 using GatherUs.API.DTO.User;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 
 namespace GatherUs.API.DTO.Event;
 

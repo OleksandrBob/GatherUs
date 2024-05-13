@@ -1,7 +1,7 @@
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Repository;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 using MediatR;
 
 namespace GatherUs.API.Handlers.Events;

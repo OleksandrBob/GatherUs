@@ -1,5 +1,5 @@
 using GatherUs.DAL.Models;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 namespace GatherUs.DAL.Context;

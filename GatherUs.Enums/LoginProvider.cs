@@ -1,4 +1,4 @@
-namespace GatherUs.Enums.DAL;
+namespace GatherUs.Enums;
 
 [Flags]
 public enum LoginProvider

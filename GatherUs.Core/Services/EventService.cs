@@ -8,7 +8,7 @@ using GatherUs.Core.Helpers;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
 using GatherUs.DAL.Repository;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 using LinqKit;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
@@ -29,6 +29,16 @@ public class EventService : IEventService
         "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmFwcGVhci5pbiIsImF1ZCI6Imh0dHBzOi8vYXBpLmFwcGVhci5pbi92MSIsImV4cCI6OTAwNzE5OTI1NDc0MDk5MSwiaWF0IjoxNzExNDcxNjY1LCJvcmdhbml6YXRpb25JZCI6MjIxMTA4LCJqdGkiOiIzOGQyZTlhZS1jNjk1LTQxMTMtOGVkZi1jNWEzZDIxNDk0NzMifQ._wOeA5JR6WKPlKCUqu158QSlJ17grDVAjbqMlaqwPAc";
 
     private const string ContainerName = "images";
+    
+    private const string RoomModeGroup = "group";
+    
+    private const string HostRoomUrl = "hostRoomUrl";
+    
+    private const string ApplicationJsonType = "application/json";
+    
+    private const string BearerScheme = "Bearer";
+    
+    private const string WherebyMeetingsUrl = "https://api.whereby.dev/v1/meetings";
 
     public EventService(IUnitOfWork unitOfWork, IHttpClientFactory httpClientFactory)
     {
@@ -74,18 +84,17 @@ public class EventService : IEventService
 
         if (customEventLocationType == CustomEventLocationType.Online)
         {
-            //TODO: move strings to const
             var stringPayload = JsonConvert.SerializeObject(new
             {
-                roomMode = "group", isLocked = false, fields = new[] { "hostRoomUrl" },
+                roomMode = RoomModeGroup, isLocked = false, fields = new[] { HostRoomUrl},
                 endDate = startTimeUtc.AddDays(2)
             });
-            var httpContent = new StringContent(stringPayload, Encoding.UTF8, "application/json");
+            var httpContent = new StringContent(stringPayload, Encoding.UTF8, ApplicationJsonType);
 
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", WhereByKey);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(BearerScheme, WhereByKey);
 
-            var createdMeetingResponse = await client.PostAsync("https://api.whereby.dev/v1/meetings", httpContent);
+            var createdMeetingResponse = await client.PostAsync(WherebyMeetingsUrl, httpContent);
             var responseBody = await createdMeetingResponse.Content.ReadAsStringAsync();
 
             var createdMeeting = JsonConvert.DeserializeObject<CreateMeetingResponse>(responseBody);

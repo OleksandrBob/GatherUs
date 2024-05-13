@@ -4,7 +4,7 @@ using GatherUs.API.DTO.Event;
 using GatherUs.API.DTO.User;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 using MediatR;
 
 namespace GatherUs.API.Handlers.Events;

@@ -1,7 +1,7 @@
 using System.Linq.Expressions;
 using CSharpFunctionalExtensions;
 using GatherUs.DAL.Models;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 
 namespace GatherUs.Core.Services.Interfaces;
 

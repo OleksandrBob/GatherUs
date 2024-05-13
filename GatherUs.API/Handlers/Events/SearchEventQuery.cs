@@ -3,7 +3,7 @@ using CSharpFunctionalExtensions;
 using GatherUs.API.DTO.Event;
 using GatherUs.Core.Errors;
 using GatherUs.Core.Services.Interfaces;
-using GatherUs.Enums.DAL;
+using GatherUs.Enums;
 using MediatR;
 using Swashbuckle.AspNetCore.Annotations;
 

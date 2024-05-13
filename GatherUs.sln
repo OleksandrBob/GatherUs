@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatherUs.DAL", "GatherUs.DA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatherUs.Enums", "GatherUs.Enums\GatherUs.Enums.csproj", "{1EA4A0A4-F735-436F-997F-EA63CEE0F6DA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GatherUs.Tests", "GatherUs.Tests\GatherUs.Tests.csproj", "{3DB9DEA9-DE61-4685-851C-7131DFF71DEA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{1EA4A0A4-F735-436F-997F-EA63CEE0F6DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1EA4A0A4-F735-436F-997F-EA63CEE0F6DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1EA4A0A4-F735-436F-997F-EA63CEE0F6DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3DB9DEA9-DE61-4685-851C-7131DFF71DEA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3DB9DEA9-DE61-4685-851C-7131DFF71DEA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3DB9DEA9-DE61-4685-851C-7131DFF71DEA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3DB9DEA9-DE61-4685-851C-7131DFF71DEA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

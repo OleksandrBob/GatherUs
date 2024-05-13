@@ -1,4 +1,4 @@
-namespace GatherUs.Enums.DAL;
+namespace GatherUs.Enums;
 
 public enum CustomEventCategory
 {

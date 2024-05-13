@@ -10,8 +10,7 @@ namespace GatherUs.API.Controllers;
 public class AccountsController : BaseController
 {
     public AccountsController(IMediator mediator) : base(mediator) { }
-
-
+    
     [HttpPost("get-confirmation-code")]
     [AllowAnonymous]
     public async Task<IActionResult> GetRegistrationConfirmationCode(GetRegistrationConfirmationCodeCommand command)
