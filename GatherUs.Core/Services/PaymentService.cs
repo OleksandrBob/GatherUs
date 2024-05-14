@@ -22,6 +22,12 @@ public class PaymentService : IPaymentService
         };
     }
 
+    public PaymentService(IUserService userService, BraintreeGateway gateway)
+    {
+        _userService = userService;
+        _apiGateway = gateway;
+    }
+
     public async Task<string> GenerateClientToken(int userId)
     {
         var user = await _userService.GetByIdAsync(userId);
@@ -45,7 +51,7 @@ public class PaymentService : IPaymentService
         };
 
         var result = await _apiGateway.Transaction.SaleAsync(request);
-        if (result.Errors is not null)
+        if (result is null || result?.Errors is not null)
         {
             return Result.Failure("Could not complete payment");
         }
@@ -65,8 +71,8 @@ public class PaymentService : IPaymentService
         };
 
         var createdCustomer = await _apiGateway.Customer.CreateAsync(customerRequest);
-        await _userService.SetBrainTreeId(email, createdCustomer.Target.Id);
+        await _userService.SetBrainTreeId(email, createdCustomer?.Target?.Id);
 
-        return createdCustomer.Target.Id;
+        return createdCustomer?.Target?.Id;
     }
 }
