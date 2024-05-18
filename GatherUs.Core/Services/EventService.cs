@@ -339,7 +339,7 @@ public class EventService : IEventService
             Fee = fee,
             GuestId = guest.Id,
             OrganizerId = organizer.Id,
-            CustomEventId = customEvent.OrganizerId,
+            CustomEventId = customEvent.Id,
             TransactionAmount = customEvent.TicketPrice,
         });
 

@@ -103,17 +103,5 @@ public class DataContext : DbContext, IDataContext
             .WithMany(e => e.Invites)
             .HasForeignKey(e => e.GuestId)
             .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<GatherUsPaymentTransaction>()
-            .HasOne(e => e.Organizer)
-            .WithOne();
-
-        modelBuilder.Entity<GatherUsPaymentTransaction>()
-            .HasOne(e => e.Guest)
-            .WithOne();
-        
-        modelBuilder.Entity<GatherUsPaymentTransaction>()
-            .HasOne(e => e.CustomEvent)
-            .WithOne();
     }
 }
