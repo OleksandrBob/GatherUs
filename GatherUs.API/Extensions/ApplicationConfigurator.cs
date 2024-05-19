@@ -24,8 +24,16 @@ internal static class ApplicationConfigurator
         builder.Services.AddEndpointsApiExplorer();
 
         builder.Services.Configure<SmtpOptions>(builder.Configuration.GetSection(nameof(SmtpOptions)));
+        builder.Services.Configure<AzureOptions>(builder.Configuration.GetSection(nameof(AzureOptions)));
+        builder.Services.Configure<WhereByOptions>(builder.Configuration.GetSection(nameof(WhereByOptions)));
+        builder.Services.Configure<BraintreeOptions>(builder.Configuration.GetSection(nameof(BraintreeOptions)));
         builder.Services.Configure<ConnectionStrings>(builder.Configuration.GetSection(nameof(ConnectionStrings)));
+
         builder.Services.AddSingleton<ISmtpOptions>(sp => sp.GetRequiredService<IOptions<SmtpOptions>>().Value);
+        builder.Services.AddSingleton<IAzureOptions>(sp => sp.GetRequiredService<IOptions<AzureOptions>>().Value);
+        builder.Services.AddSingleton<IWhereByOptions>(sp => sp.GetRequiredService<IOptions<WhereByOptions>>().Value);
+        builder.Services.AddSingleton<IBraintreeOptions>(
+            sp => sp.GetRequiredService<IOptions<BraintreeOptions>>().Value);
         builder.Services.AddSingleton<IConnectionStrings>(sp =>
             sp.GetRequiredService<IOptions<ConnectionStrings>>().Value);
 

@@ -2,6 +2,7 @@ using System.Linq.Expressions;
 using AutoFixture;
 using AutoFixture.AutoMoq;
 using GatherUs.Core.Helpers;
+using GatherUs.Core.Mailing.SetUp;
 using GatherUs.Core.Services;
 using GatherUs.DAL.Models;
 using GatherUs.DAL.Repository;
@@ -11,6 +12,12 @@ namespace GatherUs.Tests.UnitTests;
 
 public class UserServiceTests
 {
+    private static AzureOptions AzureOptions => new()
+    {
+        ConnectionStringConfig =
+            "DefaultEndpointsProtocol=https;AccountName=gatherus;AccountKey=L7c5tB9b2UDkYeURe0jL+35lgAPSEwkTq5cwubkmM5kGl+JJeJR062fnOJ7syn3S/sJBLjblSDkq+AStq/Ubcw==;EndpointSuffix=core.windows.net"
+    };
+    
     [Fact]
     public async Task GetByEmailAsync_ValidEmail_ReturnUser()
     {
@@ -19,6 +26,7 @@ public class UserServiceTests
             .ForEach(b => fixture.Behaviors.Remove(b));
         fixture.Behaviors.Add(new OmitOnRecursionBehavior(1));
 
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
         var expected = fixture.Create<User>();
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
 
@@ -30,7 +38,7 @@ public class UserServiceTests
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expected);
 
-        var userService = new UserService(unitOfWork.Object);
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
 
         var user = await userService.GetByEmailAsync(It.IsAny<string>());
 
@@ -47,6 +55,7 @@ public class UserServiceTests
 
         var expected = fixture.Create<User>();
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -56,7 +65,7 @@ public class UserServiceTests
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expected);
 
-        var userService = new UserService(unitOfWork.Object);
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
 
         var user = await userService.GetByIdAsync(It.IsAny<int>());
 
@@ -74,6 +83,7 @@ public class UserServiceTests
         var expectedUser = fixture.Create<User>();
         var expectedBalance = expectedUser.Balance;
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -83,7 +93,7 @@ public class UserServiceTests
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expectedUser);
 
-        var userService = new UserService(unitOfWork.Object);
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
         var amountToAdd = It.IsAny<decimal>();
 
         await userService.AddMoney(expectedUser.Id, amountToAdd);
@@ -101,6 +111,7 @@ public class UserServiceTests
         var expectedUser = fixture.Create<User>();
         var expectedBraintreeId = It.IsAny<string>();
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -110,7 +121,7 @@ public class UserServiceTests
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expectedUser);
 
-        var userService = new UserService(unitOfWork.Object);
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
 
         await userService.SetBrainTreeId(expectedUser.Mail, expectedBraintreeId);
 
@@ -127,6 +138,7 @@ public class UserServiceTests
 
         var expectedUser = fixture.Create<User>();
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -135,7 +147,8 @@ public class UserServiceTests
                     false,
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expectedUser);
-        var userService = new UserService(unitOfWork.Object);
+        
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
 
         await userService.DeleteProfilePicture(expectedUser.Id);
 
@@ -152,6 +165,7 @@ public class UserServiceTests
 
         User expectedUser = null;
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -160,7 +174,8 @@ public class UserServiceTests
                     false,
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expectedUser);
-        var userService = new UserService(unitOfWork.Object);
+
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
 
         var actualResult = await userService.DeleteProfilePicture(It.IsAny<int>());
 
@@ -182,6 +197,7 @@ public class UserServiceTests
         var fileName = PictureHelper.GetUserProfilePictureUrl(expectedUser.Id) + '.' + ext;
 
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -190,13 +206,14 @@ public class UserServiceTests
                     false,
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expectedUser);
-        var userService = new UserService(unitOfWork.Object);
+
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
 
         var profilePictureUrl = await userService.UploadProfilePicture(expectedUser.Id, imageFile, name);
 
         Assert.Equal("https://gatherus.blob.core.windows.net/images/" + fileName, profilePictureUrl);
     }
-    
+
     [Fact]
     public async Task UploadProfilePicture_FileDontExists_UpdatePicture()
     {
@@ -212,6 +229,7 @@ public class UserServiceTests
         var fileName = PictureHelper.GetUserProfilePictureUrl(expectedUser.Id) + '.' + ext;
 
         var unitOfWork = fixture.Freeze<Mock<IUnitOfWork>>();
+        var azureOptions = fixture.Freeze<Mock<IAzureOptions>>();
 
         unitOfWork
             .Setup(m => m.Users
@@ -220,8 +238,9 @@ public class UserServiceTests
                     false,
                     It.IsAny<Expression<Func<User, object>>[]>()))
             .ReturnsAsync(expectedUser);
-        var userService = new UserService(unitOfWork.Object);
 
+        var userService = new UserService(unitOfWork.Object, AzureOptions);
+        
         var profilePictureUrl = await userService.UploadProfilePicture(expectedUser.Id, imageFile, name);
 
         Assert.True(profilePictureUrl.IsFailure);

@@ -5,6 +5,7 @@ using Azure.Storage.Blobs;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.ApiObjects;
 using GatherUs.Core.Helpers;
+using GatherUs.Core.Mailing.SetUp;
 using GatherUs.Core.Services.Interfaces;
 using GatherUs.DAL.Models;
 using GatherUs.DAL.Repository;
@@ -17,17 +18,11 @@ namespace GatherUs.Core.Services;
 
 public class EventService : IEventService
 {
-    private readonly IUnitOfWork _unitOfWork;
     private readonly BlobContainerClient _imagesContainerClient;
     private readonly IHttpClientFactory _httpClientFactory;
-
-    //TODO: Remove strings from here
-    private const string ConnectionString =
-        "DefaultEndpointsProtocol=https;AccountName=gatherus;AccountKey=L7c5tB9b2UDkYeURe0jL+35lgAPSEwkTq5cwubkmM5kGl+JJeJR062fnOJ7syn3S/sJBLjblSDkq+AStq/Ubcw==;EndpointSuffix=core.windows.net";
-
-    private const string WhereByKey =
-        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmFwcGVhci5pbiIsImF1ZCI6Imh0dHBzOi8vYXBpLmFwcGVhci5pbi92MSIsImV4cCI6OTAwNzE5OTI1NDc0MDk5MSwiaWF0IjoxNzExNDcxNjY1LCJvcmdhbml6YXRpb25JZCI6MjIxMTA4LCJqdGkiOiIzOGQyZTlhZS1jNjk1LTQxMTMtOGVkZi1jNWEzZDIxNDk0NzMifQ._wOeA5JR6WKPlKCUqu158QSlJ17grDVAjbqMlaqwPAc";
-
+    private readonly IWhereByOptions _whereByOptions;
+    private readonly IUnitOfWork _unitOfWork;
+    
     private const string ContainerName = "images";
     
     private const string RoomModeGroup = "group";
@@ -38,14 +33,14 @@ public class EventService : IEventService
     
     private const string BearerScheme = "Bearer";
     
-    private const string WherebyMeetingsUrl = "https://api.whereby.dev/v1/meetings";
 
-    public EventService(IUnitOfWork unitOfWork, IHttpClientFactory httpClientFactory)
+    public EventService(IUnitOfWork unitOfWork, IHttpClientFactory httpClientFactory, IAzureOptions azureOptions, IWhereByOptions whereByOptions)
     {
         _unitOfWork = unitOfWork;
         _httpClientFactory = httpClientFactory;
+        _whereByOptions = whereByOptions;
 
-        var blobServiceClient = new BlobServiceClient(ConnectionString);
+        var blobServiceClient = new BlobServiceClient(azureOptions?.ConnectionString);
         _imagesContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
     }
 
@@ -92,9 +87,9 @@ public class EventService : IEventService
             var httpContent = new StringContent(stringPayload, Encoding.UTF8, ApplicationJsonType);
 
             var client = _httpClientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(BearerScheme, WhereByKey);
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(BearerScheme, _whereByOptions?.ApiKey);
 
-            var createdMeetingResponse = await client.PostAsync(WherebyMeetingsUrl, httpContent);
+            var createdMeetingResponse = await client.PostAsync(_whereByOptions?.ApiUrl, httpContent);
             var responseBody = await createdMeetingResponse.Content.ReadAsStringAsync();
 
             var createdMeeting = JsonConvert.DeserializeObject<CreateMeetingResponse>(responseBody);

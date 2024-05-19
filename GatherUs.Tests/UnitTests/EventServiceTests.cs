@@ -1,5 +1,6 @@
 using AutoFixture;
 using AutoFixture.AutoMoq;
+using GatherUs.Core.Mailing.SetUp;
 using GatherUs.Core.Services;
 using GatherUs.DAL.Models;
 using GatherUs.DAL.Repository;
@@ -10,6 +11,18 @@ namespace GatherUs.Tests.UnitTests;
 
 public class EventServiceTests
 {
+    private static AzureOptions AzureOptions => new()
+    {
+        ConnectionStringConfig =
+            "DefaultEndpointsProtocol=https;AccountName=gatherus;AccountKey=L7c5tB9b2UDkYeURe0jL+35lgAPSEwkTq5cwubkmM5kGl+JJeJR062fnOJ7syn3S/sJBLjblSDkq+AStq/Ubcw==;EndpointSuffix=core.windows.net"
+    };
+
+    private static WhereByOptions WhereByOptions => new()
+    {
+        ApiKeyConfig = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJodHRwczovL2FjY291bnRzLmFwcGVhci5pbiIsImF1ZCI6Imh0dHBzOi8vYXBpLmFwcGVhci5pbi92MSIsImV4cCI6OTAwNzE5OTI1NDc0MDk5MSwiaWF0IjoxNzExNDcxNjY1LCJvcmdhbml6YXRpb25JZCI6MjIxMTA4LCJqdGkiOiIzOGQyZTlhZS1jNjk1LTQxMTMtOGVkZi1jNWEzZDIxNDk0NzMifQ._wOeA5JR6WKPlKCUqu158QSlJ17grDVAjbqMlaqwPAc",
+        ApiUrlConfig = "https://api.whereby.dev/v1/meetings"
+    };
+    
     [Fact]
     public async Task CreateEvent_OnsiteEvent_EventCreated()
     {
@@ -26,7 +39,7 @@ public class EventServiceTests
         var httpClientFactory = fixture.Freeze<Mock<IHttpClientFactory>>();
         expectedEvent.CustomEventLocationType = CustomEventLocationType.Onsite;
 
-        var eventService = new EventService(unitOfWork.Object, httpClientFactory.Object);
+        var eventService = new EventService(unitOfWork.Object, httpClientFactory.Object, AzureOptions, WhereByOptions);
 
         var createdEventId = await eventService.CreateEvent(
             expectedEvent.OrganizerId,
@@ -68,7 +81,7 @@ public class EventServiceTests
         var httpClientFactory = fixture.Freeze<Mock<IHttpClientFactory>>();
         expectedEvent.CustomEventLocationType = CustomEventLocationType.Onsite;
 
-        var eventService = new EventService(unitOfWork.Object, httpClientFactory.Object);
+        var eventService = new EventService(unitOfWork.Object, httpClientFactory.Object, AzureOptions, WhereByOptions);
 
         var createdInvite = await eventService.InviteUser(expectedGuestId, expectedEventId, expectedInviteMessage);
         

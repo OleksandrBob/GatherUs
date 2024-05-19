@@ -118,8 +118,6 @@ public class UnitOfWork : IDisposable, IUnitOfWork
 
                         foreach (var property in entry.Metadata.GetProperties())
                         {
-                            // TODO: Logic to decide which value should be written to database
-                            // Currently the same optimistic resolution as default
                         }
 
                         entry.OriginalValues.SetValues(currentValues);

@@ -1,5 +1,7 @@
 using GatherUs.Core.Services.Interfaces;
 using CSharpFunctionalExtensions;
+using GatherUs.Core.Mailing.SetUp;
+
 namespace GatherUs.Core.Services;
 using Braintree;
 
@@ -8,17 +10,16 @@ public class PaymentService : IPaymentService
     private readonly IUserService _userService;
     private readonly BraintreeGateway _apiGateway;
 
-    public PaymentService(IUserService userService)
+    public PaymentService(IUserService userService, IBraintreeOptions braintreeOptions)
     {
         _userService = userService;
 
-        //TODO: get params fom env
         _apiGateway = new()
         {
             Environment = Environment.SANDBOX,
-            MerchantId = "vsk2ttpb6t6wcdb4",
-            PublicKey = "ybtn3jmc3ynv3cbm",
-            PrivateKey = "8256f637a827408c535bfaa75f2908ce"
+            MerchantId = braintreeOptions.MerchantId,
+            PublicKey = braintreeOptions.PublicKey,
+            PrivateKey = braintreeOptions.PrivateKey,
         };
     }
 

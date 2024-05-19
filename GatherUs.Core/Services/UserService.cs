@@ -5,6 +5,7 @@ using GatherUs.DAL.Repository;
 using Azure.Storage.Blobs;
 using CSharpFunctionalExtensions;
 using GatherUs.Core.Helpers;
+using GatherUs.Core.Mailing.SetUp;
 
 namespace GatherUs.Core.Services;
 
@@ -13,17 +14,13 @@ public class UserService : IUserService
     private readonly IUnitOfWork _unitOfWork;
     private readonly BlobContainerClient _imagesContainerClient;
 
-    //TODO: Remove strings from here
-    private const string ConnectionString =
-        "DefaultEndpointsProtocol=https;AccountName=gatherus;AccountKey=L7c5tB9b2UDkYeURe0jL+35lgAPSEwkTq5cwubkmM5kGl+JJeJR062fnOJ7syn3S/sJBLjblSDkq+AStq/Ubcw==;EndpointSuffix=core.windows.net";
-
     private const string ContainerName = "images";
 
-    public UserService(IUnitOfWork unitOfWork)
+    public UserService(IUnitOfWork unitOfWork, IAzureOptions azureOptions)
     {
         _unitOfWork = unitOfWork;
 
-        var blobServiceClient = new BlobServiceClient(ConnectionString);
+        var blobServiceClient = new BlobServiceClient(azureOptions.ConnectionString);
         _imagesContainerClient = blobServiceClient.GetBlobContainerClient(ContainerName);
     }
 
