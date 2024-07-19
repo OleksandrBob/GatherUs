@@ -70,7 +70,8 @@ public class MailingService : IMailingService
             };
 
             using var client = new MailKit.Net.Smtp.SmtpClient();
-            await client.ConnectAsync(_smtpOptions.Host, _smtpOptions.Port, SecureSocketOptions.StartTls);
+            await client.ConnectAsync(_smtpOptions.Host, Convert.ToInt32(_smtpOptions.Port),
+                SecureSocketOptions.StartTls);
             await client.AuthenticateAsync(_smtpOptions.UserName, _smtpOptions.Password);
             await client.SendAsync(email);
             await client.DisconnectAsync(true);
