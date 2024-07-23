@@ -1,0 +1,23 @@
+name: GatherUs API deploy
+
+on:
+  workflow_dispatch:
+
+jobs:
+  buils:
+    runs-on: ubuntu-latest
+
+    steps: 
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6.x'
+
+      - name: Restore dependencies
+        run: dotnet restore ./GatherUs.API/GatherUs.API.csproj
+
+      - name: Build
+        run: dotnet build ./GatherUs.API/GatherUs.API.csproj --configuration Release --no-restore
