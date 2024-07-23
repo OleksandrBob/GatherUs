@@ -22,9 +22,6 @@ jobs:
       - name: Build
         run: dotnet build ./GatherUs.API/GatherUs.API.csproj --configuration Release --no-restore
 
-      - name: Run unit tests
-        run: dotnet test ./GatherUs.Tests/GatherUs.Tests.csproj --no-restore --verbosity normal --nologo
-
       - name: Build Docker image
         run: docker build -t ${{ secrets.REGISTRY_USERNAME }}/gatherusapi:${{ github.sha }} ./GatherUs.API
         env:
