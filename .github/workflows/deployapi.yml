@@ -23,7 +23,7 @@ jobs:
         run: dotnet build ./GatherUs.API/GatherUs.API.csproj --configuration Release --no-restore
 
       - name: Build Docker image
-        run: docker build -t ${{ secrets.REGISTRY_USERNAME }}/gatherusapi:${{ github.sha }} ./GatherUs.API
+        run: docker build -t ${{ secrets.REGISTRY_USERNAME }}/gatherusapi:${{ github.sha }} ./
         env:
           DOCKER_BUILDKIT: 1
 
@@ -36,3 +36,18 @@ jobs:
       - name: Push Docker image to Docker Hub
         run: docker push ${{ secrets.REGISTRY_USERNAME }}/gatherusapi:${{ github.sha }}
 
+      - name: Log in to Azure
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Build and deploy Container App
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          appSourcePath: ${{ github.workspace }}
+          registryUrl: docker.io
+          registryUsername: ${{ secrets.REGISTRY_USERNAME }}
+          registryPassword: ${{ secrets.REGISTRY_PASSWORD }}
+          containerAppName: GatherUsApi
+          resourceGroup: GatherUs
+          image: ${{ secrets.REGISTRY_USERNAME }}/gatherusapi:${{ github.sha }}
