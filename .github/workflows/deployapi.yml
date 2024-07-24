@@ -23,4 +23,6 @@ jobs:
           registryUrl: docker.io
           registryUsername: ${{ secrets.REGISTRY_USERNAME }}
           registryPassword: ${{ secrets.REGISTRY_PASSWORD }}
+          containerAppName: gather-us-api-container-app
+          resourceGroup: GatherUs
           imageToBuild: docker.io/oleksandrbob/gather-us:${{ github.sha }}
